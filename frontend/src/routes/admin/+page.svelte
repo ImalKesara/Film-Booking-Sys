@@ -1,12 +1,13 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import Movie from '$lib/components/Movie.svelte';
+	import Pagination from '$lib/components/Pagination.svelte';
 	import type { MovieType } from '$lib/types';
-	let { data }: { data: { movies: MovieType[]; totalPages: number; currentPage: number } } =
-		$props();
-	const goToPage = function (pNumber: number = 1) {
-		goto(`/admin?page=${pNumber}`);
-	};
+	let {
+		data
+	}: {
+		data: { movies: MovieType[]; totalPages: number; currentPage: number; totalResult: number };
+	} = $props();
 </script>
 
 <main class="mx-auto max-w-7xl space-y-8 p-4">
@@ -17,9 +18,10 @@
 		{/each}
 	</div>
 	<div>
-		<button
-			class="btn preset-filled-primary-500 text-black"
-			onclick={() => goToPage(data.currentPage + 1)}>Next</button
-		>
+		<Pagination
+			currentPage={data.currentPage}
+			pageSize={data.movies.length}
+			totalResult={data.totalResult}
+		/>
 	</div>
 </main>

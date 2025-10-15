@@ -30,7 +30,8 @@ export const load: PageLoad = async ({ fetch, url }) => {
 		return {
 			movies: data.results || [],
 			totalPages: data.total_pages || 1,
-			currentPage: page
+			currentPage: page,
+			totalResult : data.total_results ,
 		};
 	} catch (error) {
 		console.error('Error fetching movie changes:', error);
