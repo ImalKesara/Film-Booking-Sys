@@ -10,9 +10,8 @@
 	} = $props();
 </script>
 
-<main class="mx-auto max-w-7xl space-y-8 p-4">
-	<h1 class="text-center text-lg">TMDB Movies</h1>
-	<div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+<main class="mx-auto max-w-7xl space-y-8 p-4 my-5">
+	<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
 		{#each data.movies as movie (movie.id)}
 			<Movie {movie} />
 		{/each}

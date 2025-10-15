@@ -1,13 +1,12 @@
 <script lang="ts">
-	import { CalendarIcon, CircleUserIcon, MenuIcon, SearchIcon } from '@lucide/svelte';
+	import { MenuIcon } from '@lucide/svelte';
 	import { AppBar } from '@skeletonlabs/skeleton-svelte';
 </script>
 
 <AppBar>
 	<AppBar.Toolbar class="grid-cols-[1fr_2fr_1fr]">
 		<AppBar.Lead>
-			<button type="button" class="btn-icon btn-icon-lg hover:preset-tonal"><MenuIcon /></button
-			>
+			<button type="button" class="btn-icon btn-icon-lg hover:preset-tonal"><MenuIcon /></button>
 		</AppBar.Lead>
 		<AppBar.Headline class="flex justify-center gap-2">
 			<!-- <p>Home</p>
