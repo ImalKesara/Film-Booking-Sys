@@ -19,8 +19,6 @@ export const load: PageLoad = async ({ fetch }) => {
 
 		const data = await res.json();
 
-		console.log(data);
-
 		return {
 			movies: data.results || []
 		};
