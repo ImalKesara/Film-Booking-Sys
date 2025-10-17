@@ -17,10 +17,11 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
-    private String role;
     private String name;
+    @Column(unique = true , nullable = false)
     private String email;
     private String phone;
+    @Column(nullable = false)
     private String password;
     private LocalDate dateOfBirth;
 
@@ -29,4 +30,7 @@ public class User {
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private LoyaltyPoint loyaltyPoint;
+
+    @Enumerated(EnumType.STRING)
+    private UserRole userRole = UserRole.USER;
 }
