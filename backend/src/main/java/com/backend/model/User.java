@@ -33,4 +33,9 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     private UserRole userRole = UserRole.USER;
+
+    public UserRole getRole() {
+        return this.userRole; // Verify `role` contains valid UserRole
+    }
+
 }
