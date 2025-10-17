@@ -1,7 +1,9 @@
 <script lang="ts">
 	let email: string = $state('');
 	let password: string = $state('');
-	const login = async () => {};
+	const login = async () => {
+		'/api/......'
+	};
 </script>
 
 <form
