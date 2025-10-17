@@ -16,7 +16,7 @@
 
 	<article class="space-y-4 p-4">
 		<div>
-			<h2 class="text-sm text-gray-500">{movie.original_title}</h2>
+			<h2 class="text-sm text-gray-500 line-clamp-1">{movie.original_title}</h2>
 		</div>
 		<p class="line-clamp-3 opacity-60">
 			{movie.overview}
