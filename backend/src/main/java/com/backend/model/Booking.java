@@ -28,7 +28,7 @@ public class Booking {
 
     @ManyToOne
     @JoinColumn(name = "show_id")
-    private Show show;
+    private MovieShow movieShow;
 
     @OneToOne(mappedBy = "booking", cascade = CascadeType.ALL)
     private Payment payment;

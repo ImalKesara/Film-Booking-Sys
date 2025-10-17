@@ -28,5 +28,5 @@ public class Movie {
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
-    private List<Show> shows;
+    private List<MovieShow> movieShows;
 }

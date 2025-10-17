@@ -14,7 +14,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Show {
+public class MovieShow {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +34,7 @@ public class Show {
     @JoinColumn(name = "hall_id")
     private Hall hall;
 
-    @OneToMany(mappedBy = "show", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "movieShow", cascade = CascadeType.ALL)
     private List<Booking> bookings;
 }
 

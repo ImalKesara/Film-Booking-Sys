@@ -27,6 +27,6 @@ public class Hall {
     private Location location;
 
     @OneToMany(mappedBy = "hall", cascade = CascadeType.ALL)
-    private List<Show> shows;
+    private List<MovieShow> movieShows;
 }
 
