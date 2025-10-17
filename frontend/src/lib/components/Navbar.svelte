@@ -12,13 +12,13 @@
 		<AppBar.Headline class="flex justify-center gap-2">
 			<!-- <p>Home</p>
 			<p>Movies</p> -->
-			<ThemeController />
+			
 		</AppBar.Headline>
 		<AppBar.Trail class="justify-end">
-			
-			<button type="button" class="btn preset-filled-primary-500 rounded-none uppercase text-white"
+			<ThemeController />
+			<!-- <button type="button" class="btn preset-filled-primary-500 rounded-none uppercase text-white"
 				>buy tickets
-			</button>
+			</button> -->
 			<button type="button" class="btn preset-tonal-surface uppercase">login</button>
 		</AppBar.Trail>
 	</AppBar.Toolbar>
