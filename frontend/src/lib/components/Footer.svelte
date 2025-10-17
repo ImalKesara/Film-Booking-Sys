@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { MenuIcon } from '@lucide/svelte';
 	import { AppBar } from '@skeletonlabs/skeleton-svelte';
+	import ThemeController from './ThemeController.svelte';
 </script>
 
 <AppBar>
