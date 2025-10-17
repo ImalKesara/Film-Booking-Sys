@@ -1,6 +1,7 @@
 <script lang="ts">
-	import { CalendarIcon, CircleUserIcon, MenuIcon, SearchIcon } from '@lucide/svelte';
+	import { MenuIcon } from '@lucide/svelte';
 	import { AppBar } from '@skeletonlabs/skeleton-svelte';
+	import ThemeController from './ThemeController.svelte';
 </script>
 
 <AppBar>
@@ -9,19 +10,16 @@
 			<button type="button" class="btn-icon btn-icon-lg hover:preset-tonal"><MenuIcon /></button>
 		</AppBar.Lead>
 		<AppBar.Headline class="flex justify-center gap-2">
-			<p>Home</p>
-			<p>Movies</p>
+			<!-- <p>Home</p>
+			<p>Movies</p> -->
+			
 		</AppBar.Headline>
 		<AppBar.Trail class="justify-end">
-			<button type="button" class="btn-icon hover:preset-tonal"
-				><SearchIcon class="size-6" /></button
-			>
-			<button type="button" class="btn-icon hover:preset-tonal"
-				><CalendarIcon class="size-6" /></button
-			>
-			<button type="button" class="btn-icon hover:preset-tonal"
-				><CircleUserIcon class="size-6" /></button
-			>
+			<ThemeController />
+			<!-- <button type="button" class="btn preset-filled-primary-500 rounded-none uppercase text-white"
+				>buy tickets
+			</button> -->
+			<button type="button" class="btn preset-tonal-surface uppercase">login</button>
 		</AppBar.Trail>
 	</AppBar.Toolbar>
 </AppBar>
