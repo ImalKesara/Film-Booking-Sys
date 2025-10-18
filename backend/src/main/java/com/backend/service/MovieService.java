@@ -32,4 +32,24 @@ public class MovieService {
         return repo.findAll();
     }
 
+    public Movie getById(Long id){
+        return repo.findById(id).orElseThrow(() -> new RuntimeException("Movie not found with id: " + id));
+    }
+
+    public Movie update(MovieDto dto, Long id){
+        Movie m = getById(id);
+        m.setTitle(dto.getTitle());
+        m.setDescription(dto.getDescription());
+        m.setRating(dto.getRating());
+        m.setPosterUrl(dto.getPosterUrl());
+        m.setBackDropPathUrl(dto.getBackDropPathUrl());
+        m.setTmdbId(dto.getTmdbId());
+        m.setCreatedAt(dto.getCreatedAt());
+        return repo.save(m);
+    }
+
+    public void delete(Long id){
+        repo.deleteById(id);
+    }
+
 }
