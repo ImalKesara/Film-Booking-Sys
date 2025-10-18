@@ -19,11 +19,10 @@ public class Movie {
     private Long movieId;
 
     private String title;
-    private String genre;
-    private int duration;
     private String description;
     private double rating;
     private String posterUrl;
+    private String backDropPathUrl;
     private String tmdbId;
     private LocalDateTime createdAt;
 
