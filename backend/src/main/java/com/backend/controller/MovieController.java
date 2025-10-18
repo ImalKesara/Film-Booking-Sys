@@ -6,6 +6,8 @@ import com.backend.service.MovieService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/movie")
 @CrossOrigin
@@ -20,6 +22,27 @@ public class MovieController {
     @PostMapping
     public Movie add(@Valid @RequestBody MovieDto dto) {
         return service.addMovie(dto);
+    }
+
+    @GetMapping
+    public List<Movie> getAll() {
+        return service.getAll();
+    }
+
+    @GetMapping("/{id}")
+    public Movie getById(@PathVariable Long id) {
+        return service.getById(id);
+    }
+
+    @PutMapping("/{id}")
+    public Movie update(@Valid @RequestBody MovieDto dto, @PathVariable Long id) {
+        return service.update(dto, id);
+    }
+
+    @DeleteMapping("/{id}")
+    public String delete(@PathVariable Long id) {
+        service.delete(id);
+        return "Movie deleted successfully!";
     }
 
 }
