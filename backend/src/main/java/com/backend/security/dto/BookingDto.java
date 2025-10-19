@@ -19,7 +19,6 @@ public class BookingDto {
     private int sheetsBooked;
     @Min(0)
     private double totalPrice;
-    @NotNull
-    private LocalDateTime createdAt;
+
 
 }
