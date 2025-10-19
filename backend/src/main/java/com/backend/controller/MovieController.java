@@ -4,6 +4,7 @@ import com.backend.model.Movie;
 import com.backend.security.dto.MovieDto;
 import com.backend.service.MovieService;
 import jakarta.validation.Valid;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/movie")
 @CrossOrigin
+@PreAuthorize("hasAuthority('ADMIN')")
 public class MovieController {
 
     private final MovieService service;
@@ -20,7 +22,7 @@ public class MovieController {
     }
 
     @PostMapping
-    public Movie add(@Valid @RequestBody MovieDto dto) {
+    public Movie add( @RequestBody MovieDto dto) {
         return service.addMovie(dto);
     }
 

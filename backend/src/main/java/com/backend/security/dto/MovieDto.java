@@ -1,11 +1,13 @@
 package com.backend.security.dto;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Data
+@Builder
 public class MovieDto {
 
     private Long movieId;
@@ -24,5 +26,6 @@ public class MovieDto {
     private String tmdbId;
     @NotNull
     private LocalDateTime createdAt;
+
 
 }

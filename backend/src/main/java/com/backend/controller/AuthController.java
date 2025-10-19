@@ -2,6 +2,7 @@ package com.backend.controller;
 
 import com.backend.model.User;
 import com.backend.repository.UserRepository;
+import com.backend.security.dto.AuthRequest;
 import com.backend.security.jwt.JwtService;
 import com.backend.service.CustomUserDetailsService;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -36,12 +37,14 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public Map<String, String> login(@RequestBody Map<String, String> loginRequest) {
+    public Map<String, String> login(@RequestBody AuthRequest loginRequest) {
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.get("email"), loginRequest.get("password"))
+                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
         );
+        var user = userRepository.findByEmail(loginRequest.getUsername())
+                .orElseThrow();
 
-        String token = jwtService.generateToken(loginRequest.get("email"));
+        String token = jwtService.generateToken(user);
         return Map.of("token", token);
     }
 }
