@@ -1,6 +1,32 @@
 <script lang="ts">
 	import type { MovieType } from '$lib/types';
 	let { movie }: { movie: MovieType } = $props();
+
+	const addToBucket = async () => {
+		const token = localStorage.getItem('token');
+		const passMovie = await fetch('/api/admin/movie', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}}`
+			},
+			body: JSON.stringify({
+				title: movie.title,
+				description: movie.overview,
+				rating: movie.vote_average,
+				posterUrl: movie.poster_path,
+				backDropPathUrl: movie.backdrop_path,
+				tmdbId: movie.id,
+				createdAt: new Date()
+			})
+		});
+
+		if (passMovie.ok) {
+			alert('Movie added to bucket successfully!');
+		} else {
+			alert('Failed to add movie to bucket.');
+		}
+	};
 </script>
 
 <main
@@ -8,7 +34,7 @@
 >
 	<header>
 		<img
-			class="h-[500px] w-full object-cover"
+			class="h-[450px] w-full object-cover"
 			src={`https://image.tmdb.org/t/p/original/${movie.poster_path}`}
 			alt="Upcoming movies"
 		/>
@@ -16,7 +42,7 @@
 
 	<article class="space-y-4 p-4">
 		<div>
-			<h2 class="text-sm text-gray-500 line-clamp-1">{movie.original_title}</h2>
+			<h2 class="line-clamp-1 text-sm text-gray-500">{movie.original_title}</h2>
 		</div>
 		<p class="line-clamp-3 opacity-60">
 			{movie.overview}
@@ -24,6 +50,8 @@
 	</article>
 
 	<footer class="flex items-center justify-center gap-4 p-5">
-		<button class="btn preset-filled-secondary-500 capitalize">add to bucket</button>
+		<button class="btn preset-filled-secondary-500 capitalize" onclick={addToBucket}
+			>add to bucket</button
+		>
 	</footer>
 </main>

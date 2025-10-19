@@ -12,7 +12,7 @@
 <main class="mx-auto my-5 max-w-10/12 space-y-8 p-4">
 	<div class="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
 		{#each data.movies as movie (movie.id)}
-			<Movie {movie} />
+			<Movie {movie}  />
 		{/each}
 	</div>
 	<div>
