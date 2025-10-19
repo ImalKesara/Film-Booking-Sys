@@ -36,6 +36,7 @@ public class User  implements UserDetails{
     private LoyaltyPoint loyaltyPoint;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "userRole")
     private UserRole userRole;
 
     public UserRole getRole() {
