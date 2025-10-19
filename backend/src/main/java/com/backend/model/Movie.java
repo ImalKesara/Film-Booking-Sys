@@ -21,10 +21,12 @@ public class Movie {
     private Long movieId;
 
     private String title;
+    @Column(length = 1000)
     private String description;
     private double rating;
     private String posterUrl;
     private String backDropPathUrl;
+    @Column(unique = true , nullable = false)
     private String tmdbId;
     private LocalDateTime createdAt;
 

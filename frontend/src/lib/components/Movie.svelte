@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { invalidateAll } from '$app/navigation';
 	import type { MovieType } from '$lib/types';
 	let { movie }: { movie: MovieType } = $props();
 
@@ -23,6 +24,7 @@
 
 		if (passMovie.ok) {
 			alert('Movie added to bucket successfully!');
+			invalidateAll();
 		} else {
 			alert('Failed to add movie to bucket.');
 		}
