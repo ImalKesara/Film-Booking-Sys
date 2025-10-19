@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { MovieDto } from '$lib/types';
+	import { Undo2 } from '@lucide/svelte';
 	let { movie }: { movie: MovieDto } = $props();
 
 	const addToBucket = async () => {};
@@ -10,7 +11,7 @@
 >
 	<header>
 		<img
-			class="h-[450px] w-full object-cover"
+			class="h-[320px] w-full object-cover"
 			src={`https://image.tmdb.org/t/p/original/${movie.posterUrl}`}
 			alt="Upcoming movies"
 		/>
@@ -26,6 +27,8 @@
 	</article>
 
 	<footer class="flex items-center justify-center gap-4 p-5">
-		<button class="btn preset-filled-secondary-500 capitalize" onclick={addToBucket}>Return</button>
+		<button class="btn preset-filled-error-500 capitalize" onclick={addToBucket}
+			>Return <Undo2 size="16" /></button
+		>
 	</footer>
 </main>
