@@ -21,6 +21,9 @@ public class Booking {
     private String bookingStatus;
     private int sheetsBooked;
     private double totalPrice;
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+
 
     @ManyToOne
     @JoinColumn(name = "user_id")

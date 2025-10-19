@@ -24,7 +24,8 @@ public class MovieShow {
     private LocalTime showTime;
     private double price;
     private int availableSeats;
-    private LocalDateTime createdAt;
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @ManyToOne
     @JoinColumn(name = "movie_id")

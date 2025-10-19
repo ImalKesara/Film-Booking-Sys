@@ -20,7 +20,9 @@ public class Hall {
 
     private String name;
     private int totalSeats;
-    private LocalDateTime createdAt;
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+
 
     @ManyToOne
     @JoinColumn(name = "location_id")

@@ -40,7 +40,6 @@ public class MovieService {
         m.setPosterUrl(dto.getPosterUrl());
         m.setBackDropPathUrl(dto.getBackDropPathUrl());
         m.setTmdbId(dto.getTmdbId());
-        m.setCreatedAt(dto.getCreatedAt());
         return repo.save(m);
     }
 
