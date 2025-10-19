@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/movie")
+@RequestMapping("/api/admin/movie")
 @CrossOrigin
 @PreAuthorize("hasAuthority('ADMIN')")
 public class MovieController {
