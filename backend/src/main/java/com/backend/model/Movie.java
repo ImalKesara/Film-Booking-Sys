@@ -2,6 +2,7 @@ package com.backend.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +13,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Movie {
 
     @Id
@@ -19,11 +21,10 @@ public class Movie {
     private Long movieId;
 
     private String title;
-    private String genre;
-    private int duration;
     private String description;
     private double rating;
     private String posterUrl;
+    private String backDropPathUrl;
     private String tmdbId;
     private LocalDateTime createdAt;
 
