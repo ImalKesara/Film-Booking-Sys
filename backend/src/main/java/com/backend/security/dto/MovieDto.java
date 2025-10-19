@@ -1,5 +1,6 @@
 package com.backend.security.dto;
 
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
@@ -24,8 +25,6 @@ public class MovieDto {
     private String backDropPathUrl;
     @NotNull
     private String tmdbId;
-    @NotNull
-    private LocalDateTime createdAt;
 
 
 }

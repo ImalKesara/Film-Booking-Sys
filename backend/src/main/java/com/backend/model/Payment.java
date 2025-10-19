@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Entity
@@ -18,11 +19,11 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long paymentId;
 
-    private LocalDate paymentDate;
-    private LocalTime paymentTime;
     private double amount;
     private String paymentMethod;
     private String paymentStatus;
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @OneToOne
     @JoinColumn(name = "booking_id")
