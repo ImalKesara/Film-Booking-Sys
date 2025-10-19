@@ -1,11 +1,11 @@
 package com.backend.security.dto;
 
-import jakarta.annotation.Nullable;
+
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 
-import java.time.LocalDateTime;
+
 
 @Data
 @Builder

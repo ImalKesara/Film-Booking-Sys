@@ -21,7 +21,6 @@ public class Payment {
 
     private double amount;
     private String paymentMethod;
-    private String paymentStatus;
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
