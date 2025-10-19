@@ -4,14 +4,13 @@ import { browser } from '$app/environment';
 import { redirect } from '@sveltejs/kit';
 
 export const load: PageLoad = async ({ fetch, url }) => {
+	const token = localStorage.getItem('token');
 	if (browser) {
-		const token = localStorage.getItem('token');
 		if (!token) {
 			throw redirect(302, '/login');
 		}
 	}
 
-	const token = localStorage.getItem('token');
 	const response = await fetch('/api/auth/me', {
 		headers: {
 			Authorization: `Bearer ${token}`
@@ -20,12 +19,12 @@ export const load: PageLoad = async ({ fetch, url }) => {
 
 	if (!response.ok) {
 		localStorage.removeItem('token');
-		throw redirect(302, '/login');
+		redirect(302, '/login');
 	}
 
 	const user = await response.json();
 	if (user.role !== 'ADMIN') {
-		throw redirect(302, '/me');
+		redirect(302, '/me');
 	}
 
 	try {

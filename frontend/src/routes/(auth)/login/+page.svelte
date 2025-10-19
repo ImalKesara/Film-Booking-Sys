@@ -21,10 +21,11 @@
 			});
 			if (response.ok) {
 				const data = await response.json();
-				console.log('Login successful', data);
-				auth.login(data.token);
+				const token = data.token;
 
-				if (auth.isAdmin) {
+				auth.login(token);
+
+				if (auth.user?.role === 'ADMIN') {
 					goto('/admin');
 				} else {
 					goto('/me');

@@ -3,7 +3,7 @@ import { browser } from '$app/environment';
 type User = {
 	id: number;
 	email: string;
-	role: 'ADMIN' | 'USER';
+	role: string;
 	name: string;
 };
 
@@ -59,6 +59,7 @@ class AuthState {
 	get isAdmin() {
 		return this.user?.role === 'ADMIN';
 	}
+
 }
 
 export const auth = new AuthState();
