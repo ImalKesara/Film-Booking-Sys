@@ -1,9 +1,36 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
+	import { invalidateAll } from '$app/navigation';
+	import { toaster } from '$lib/states/toaster.svelte';
 	import type { MovieDto } from '$lib/types';
 	import { Undo2 } from '@lucide/svelte';
 	let { movie }: { movie: MovieDto } = $props();
 
-	const addToBucket = async () => {};
+	const addToBucket = async () => {
+		if (browser) {
+			const token = localStorage.getItem('token');
+			const response = await fetch(`/api/admin/movie/${movie.movieId}`, {
+				method: 'DELETE',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${token}`
+				}
+			});
+
+			if (response.ok) {
+				toaster.success({
+					title: 'Movie Returned',
+					description: `${movie.title} has been returned from the bucket successfully.`
+				});
+				invalidateAll();
+			} else {
+				toaster.error({
+					title: 'Error',
+					description: `Failed to return ${movie.title} from the bucket. Please try again.`
+				});
+			}
+		}
+	};
 </script>
 
 <main
