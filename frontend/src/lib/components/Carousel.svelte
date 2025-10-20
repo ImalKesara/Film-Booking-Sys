@@ -102,6 +102,8 @@
 			<ArrowRightIcon class="h-6 w-6" />
 		</button>
 
+		<h1 class="text-center">Now Showing</h1>
+
 		<div class="card h-[450px] overflow-hidden">
 			<div
 				bind:this={carousel}
@@ -109,25 +111,27 @@
 				style="scroll-snap-type: x mandatory;"
 			>
 				{#each movies as movie, i}
-					<div
-						class="group/item relative h-full flex-shrink-0"
-						style="scroll-snap-align: start; width: 300px;"
-					>
-						<img
-							class="rounded-container-token h-full w-full object-cover shadow-lg transition-transform duration-300 group-hover/item:scale-105"
-							src={`https://image.tmdb.org/t/p/original/${movie.posterUrl || movie.backDropPathUrl}`}
-							alt={movie.title || `Movie ${i + 1}`}
-							loading="lazy"
-						/>
-
+					<a href="/admin">
 						<div
-							class="rounded-container-token absolute inset-0 flex items-end bg-gradient-to-t from-black/80 to-transparent p-4 opacity-0 transition-opacity duration-300 group-hover/item:opacity-100"
+							class="group/item relative h-full flex-shrink-0"
+							style="scroll-snap-align: start; width: 300px;"
 						>
-							<div class="text-white">
-								<h3 class="mb-1 text-lg font-bold">{movie.title || 'Untitled'}</h3>
+							<img
+								class="rounded-container-token h-full w-full object-cover shadow-lg transition-transform duration-300 group-hover/item:scale-105"
+								src={`https://image.tmdb.org/t/p/original/${movie.posterUrl || movie.backDropPathUrl}`}
+								alt={movie.title || `Movie ${i + 1}`}
+								loading="lazy"
+							/>
+
+							<div
+								class="rounded-container-token absolute inset-0 flex items-end bg-gradient-to-t from-black/80 to-transparent p-4 opacity-0 transition-opacity duration-300 group-hover/item:opacity-100"
+							>
+								<div class="text-white">
+									<h3 class="mb-1 text-lg font-bold">{movie.title || 'Untitled'}</h3>
+								</div>
 							</div>
 						</div>
-					</div>
+					</a>
 				{/each}
 			</div>
 		</div>
