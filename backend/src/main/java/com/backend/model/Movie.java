@@ -26,9 +26,10 @@ public class Movie {
     private double rating;
     private String posterUrl;
     private String backDropPathUrl;
-    @Column(unique = true , nullable = false)
+    @Column(unique = true, nullable = false)
     private String tmdbId;
-    private LocalDateTime createdAt;
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
     private List<MovieShow> movieShows;
