@@ -37,6 +37,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/booking/**").permitAll()
                         .requestMatchers("/api/payment/**").permitAll()
                         .requestMatchers("/api/admin/movie/**").hasAuthority(UserRole.ADMIN.name())
+                        .requestMatchers("/api/admin/location/**").hasAuthority(UserRole.ADMIN.name())
                         .requestMatchers("/api/admin/movie-show/**").hasAuthority(UserRole.ADMIN.name())
                         .anyRequest().authenticated()
                 )
