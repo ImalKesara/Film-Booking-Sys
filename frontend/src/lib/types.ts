@@ -14,3 +14,14 @@ export interface MovieType {
 	vote_average: number;
 	vote_count: number;
 }
+
+export interface MovieDto {
+	movieId: number;
+	title: string;
+	description: string;
+	rating: number;
+	posterUrl: string | null;
+	backDropPathUrl: string | null;
+	tmdbId: string;
+	createdAt: string;
+}

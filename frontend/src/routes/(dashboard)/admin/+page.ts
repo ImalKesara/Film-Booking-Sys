@@ -1,32 +1,8 @@
 import type { PageLoad } from './$types';
 import { PUBLIC_TMDB_API_KEY } from '$env/static/public';
-import { browser } from '$app/environment';
-import { redirect } from '@sveltejs/kit';
 
 export const load: PageLoad = async ({ fetch, url }) => {
 	const token = localStorage.getItem('token');
-	if (browser) {
-		if (!token) {
-			throw redirect(302, '/login');
-		}
-	}
-
-	const response = await fetch('/api/auth/me', {
-		headers: {
-			Authorization: `Bearer ${token}`
-		}
-	});
-
-	if (!response.ok) {
-		localStorage.removeItem('token');
-		redirect(302, '/login');
-	}
-
-	const user = await response.json();
-	if (user.role !== 'ADMIN') {
-		redirect(302, '/me');
-	}
-
 	try {
 		const page = Number(url.searchParams.get('page') || '1');
 
@@ -38,19 +14,29 @@ export const load: PageLoad = async ({ fetch, url }) => {
 			}
 		};
 
-		const res = await fetch(
-			`https://api.themoviedb.org/3/movie/upcoming?language=en-US&page=${page}`,
-			options
-		);
+		const [moviesTmdb, moviesSpring] = await Promise.all([
+			fetch(`https://api.themoviedb.org/3/movie/upcoming?language=en-US&page=${page}`, options),
+			fetch('/api/admin/movie', {
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${token}`
+				}
+			})
+		]);
 
-		if (!res.ok) {
+		if (!moviesTmdb.ok) {
 			throw new Error('Failed to fetch movie changes');
 		}
 
-		const data = await res.json();
+		if (!moviesSpring.ok) {
+			throw new Error('Failed to fetch admin movie data');
+		}
+
+		const data = await moviesTmdb.json();
+		const springMovies = await moviesSpring.json();
 
 		return {
-			user,
+			springMovies,
 			movies: data.results || [],
 			totalPages: data.total_pages || 1,
 			currentPage: page,

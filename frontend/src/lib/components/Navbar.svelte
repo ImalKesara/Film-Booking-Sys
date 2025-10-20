@@ -3,6 +3,11 @@
 	import { AppBar } from '@skeletonlabs/skeleton-svelte';
 	import ThemeController from './ThemeController.svelte';
 	import { auth } from '$lib/states/auth.svelte';
+	import { goto } from '$app/navigation';
+	const logout = () => {
+		auth.logout();
+		goto('/');
+	};
 </script>
 
 <AppBar>
@@ -11,8 +16,9 @@
 			<button type="button" class="btn-icon btn-icon-lg hover:preset-tonal"><MenuIcon /></button>
 		</AppBar.Lead>
 		<AppBar.Headline class="flex justify-center gap-2">
-			<!-- <p>Home</p>
-			<p>Movies</p> -->
+			<a href="/admin">Home</a>
+			<a href="/admin/dashboard">Dashboard</a>
+			<a href="/admin/bucket">Bucket</a>
 		</AppBar.Headline>
 		<AppBar.Trail class="justify-end">
 			<ThemeController />
@@ -20,9 +26,7 @@
 				>buy tickets
 			</button> -->
 			{#if auth.isAuthenticated}
-				<button class="btn preset-filled-primary-500" onclick={() => auth.logout()}
-					>Login out</button
-				>
+				<button class="btn preset-filled-primary-500 uppercase" onclick={logout}>Login out</button>
 			{:else}
 				<a class="btn preset-tonal-surface uppercase" href="/login">login</a>
 			{/if}
