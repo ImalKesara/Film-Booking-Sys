@@ -34,6 +34,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/user/movie/**").permitAll()
+                        .requestMatchers("/api/booking/**").permitAll()
                         .requestMatchers("/api/admin/movie/**").hasAuthority(UserRole.ADMIN.name())
                         .anyRequest().authenticated()
                 )
