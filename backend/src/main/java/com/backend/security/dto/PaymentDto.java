@@ -1,5 +1,6 @@
 package com.backend.security.dto;
 
+
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
@@ -13,5 +14,7 @@ public class PaymentDto {
     private double amount;
     @NotNull
     private String paymentMethod;
+    @NotNull
+    private Long booking;
 
 }
