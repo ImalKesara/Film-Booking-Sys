@@ -20,4 +20,5 @@ public class BookingDto {
     @Min(0)
     private double totalPrice;
 
+
 }

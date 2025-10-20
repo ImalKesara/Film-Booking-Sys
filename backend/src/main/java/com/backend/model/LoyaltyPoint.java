@@ -18,8 +18,9 @@ public class LoyaltyPoint {
     private Long loyaltyPointsId;
 
     private int pointsEarned;
-    private int pointsRedeemed;
-    private LocalDateTime updatedAt;
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+
 
     @OneToOne
     @JoinColumn(name = "user_id")
