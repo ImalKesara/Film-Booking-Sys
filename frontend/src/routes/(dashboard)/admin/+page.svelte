@@ -2,6 +2,7 @@
 	import Movie from '$lib/components/Movie.svelte';
 	import Pagination from '$lib/components/Pagination.svelte';
 	import type { MovieDto, MovieType } from '$lib/types';
+
 	let {
 		data
 	}: {

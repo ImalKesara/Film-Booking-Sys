@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { invalidateAll } from '$app/navigation';
+	import { toaster } from '$lib/states/toaster.svelte';
 	import type { MovieType } from '$lib/types';
 	let { movie }: { movie: MovieType } = $props();
 
@@ -23,10 +24,16 @@
 		});
 
 		if (passMovie.ok) {
-			alert('Movie added to bucket successfully!');
+			toaster.success({
+				title: 'Added',
+				description: `Movie "${movie.title}" added to bucket successfully.`
+			});
 			invalidateAll();
 		} else {
-			alert('Failed to add movie to bucket.');
+			toaster.error({
+				title: 'Error',
+				description: `Failed to add movie "${movie.title}" to bucket.`
+			});
 		}
 	};
 </script>

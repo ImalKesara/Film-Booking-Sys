@@ -1,6 +1,5 @@
 <script lang="ts">
 	import BucketMovie from '$lib/components/BucketMovie.svelte';
-	import Movie from '$lib/components/Movie.svelte';
 	import type { MovieDto } from '$lib/types';
 	let { data }: { data: { movies: MovieDto[] } } = $props();
 </script>
