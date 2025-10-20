@@ -1,5 +1,10 @@
 package com.backend.security.dto;
 
+import com.backend.model.MovieShow;
+import com.backend.model.Payment;
+import com.backend.model.User;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -19,6 +24,12 @@ public class BookingDto {
     private int sheetsBooked;
     @Min(0)
     private double totalPrice;
+    @NotNull
+    private Long user;
+    @NotNull
+    private Long movieShow;
+    @NotNull
+    private Long payment;
 
 
 }
