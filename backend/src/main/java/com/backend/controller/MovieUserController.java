@@ -4,10 +4,12 @@ import com.backend.model.Movie;
 
 import com.backend.service.MovieService;
 
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/user/movie")
@@ -31,5 +33,13 @@ public class MovieUserController {
         return service.getById(id);
     }
 
-
+    @GetMapping("/search")
+    public ResponseEntity<?> search(@RequestParam("query") String query) {
+        List<Movie> results = service.searchByTitle(query);
+        if (results.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("message", "Result not found"));
+        }
+        return ResponseEntity.ok(results);
+    }
 }

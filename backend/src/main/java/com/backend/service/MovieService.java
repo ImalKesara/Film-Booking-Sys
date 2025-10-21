@@ -5,8 +5,11 @@ import com.backend.repository.MovieRepository;
 import com.backend.security.dto.MovieDto;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -29,7 +32,7 @@ public class MovieService {
     }
 
     public Movie getById(Long id){
-        return repo.findById(id).orElseThrow(() -> new RuntimeException("Movie not found with id: " + id));
+        return repo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Movie not found with id: " + id));
     }
 
     public Movie update(MovieDto dto, Long id){
@@ -47,4 +50,10 @@ public class MovieService {
         repo.deleteById(id);
     }
 
+    public List<Movie> searchByTitle(String query) {
+        if (query == null) return Collections.emptyList();
+        String q = query.trim();
+        if (q.isEmpty()) return Collections.emptyList();
+        return repo.findByTitleContainingIgnoreCase(q);
+    }
 }
