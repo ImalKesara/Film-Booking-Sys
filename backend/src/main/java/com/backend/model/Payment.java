@@ -22,7 +22,7 @@ public class Payment {
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @OneToOne
-    @JoinColumn(name = "booking_id")
+    @JoinColumn(name = "booking_id", unique = true)
     private Booking booking;
 }
 
