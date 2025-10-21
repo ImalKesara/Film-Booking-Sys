@@ -1,0 +1,191 @@
+ 1. Schema Creation (DDL) and Indexing
+ The following CREATE TABLE statements define the database structure, using InnoDB for transactional
+ support and establishing primary keys (PK), foreign keys (FK), and indexes.-- Ensure InnoDB for transactional integrity
+ 
+ SET default_storage_engine=InnoDB;-- LOCATION Table
+ CREATE TABLE LOCATION (
+    Location_id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    Name VARCHAR(100) NOT NULL,
+    Address VARCHAR(255) NOT NULL,
+    City VARCHAR(50) NOT NULL,
+    ZipCode VARCHAR(10),
+    INDEX idx_location_city (City) -- Index for quick city-based searches
+ );-- HALL Table (References LOCATION)
+ CREATE TABLE HALL (
+    Hall_id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    Location_id INT UNSIGNED NOT NULL, -- FK
+    Name VARCHAR(50) NOT NULL,
+    Total_seats INT UNSIGNED NOT NULL,
+    Created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (Location_id) REFERENCES LOCATION(Location_id)
+        ON DELETE RESTRICT ON UPDATE CASCADE,
+    INDEX idx_hall_location (Location_id)
+ );-- MOVIE Table
+ CREATE TABLE MOVIE (
+    Movie_id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    Title VARCHAR(255) NOT NULL,
+    Genre VARCHAR(100),
+    Duration SMALLINT UNSIGNED,
+    Poster_url VARCHAR(255),
+    Rating DECIMAL(2, 1),
+    Description TEXT,
+    Created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_movie_title (Title),
+    INDEX idx_movie_genre (Genre)
+ );-- SHOW Table (References HALL and MOVIE)
+ CREATE TABLE SHOW (
+    Show_id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    Movie_id INT UNSIGNED NOT NULL, -- FK
+    Hall_id INT UNSIGNED NOT NULL, -- FK
+    Show_time TIME NOT NULL,
+    Show_date DATE NOT NULL,
+    Price DECIMAL(10, 2) NOT NULL,
+    Available_seats INT UNSIGNED NOT NULL,
+    Created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_show_date_movie (Show_date, Movie_id),
+    FOREIGN KEY (Movie_id) REFERENCES MOVIE(Movie_id)
+        ON DELETE RESTRICT ON UPDATE CASCADE,
+    FOREIGN KEY (Hall_id) REFERENCES HALL(Hall_id)
+        ON DELETE RESTRICT ON UPDATE CASCADE
+ );
+-- USER Table
+ CREATE TABLE USER (
+    User_id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    Name VARCHAR(100) NOT NULL,
+    Email VARCHAR(100) UNIQUE NOT NULL,
+    Phone VARCHAR(20),
+    Password VARCHAR(255) NOT NULL,
+    DateOfBirth DATE,
+    INDEX idx_user_email (Email)
+ );-- BOOKING Table (References USER and SHOW)
+ CREATE TABLE BOOKING (
+    Booking_id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    User_id INT UNSIGNED NOT NULL, -- FK
+    Show_id INT UNSIGNED NOT NULL, -- FK
+    Seats_booked TINYINT UNSIGNED NOT NULL,
+    Total_price DECIMAL(10, 2) NOT NULL,
+    Booking_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    Booking_status ENUM('PENDING', 'CONFIRMED', 'CANCELLED') NOT NULL DEFAULT 'PENDING',
+    INDEX idx_booking_user_show (User_id, Booking_time),
+    FOREIGN KEY (User_id) REFERENCES USER(User_id)
+        ON DELETE RESTRICT ON UPDATE CASCADE,
+    FOREIGN KEY (Show_id) REFERENCES SHOW(Show_id)
+        ON DELETE RESTRICT ON UPDATE CASCADE
+ );-- PAYMENT Table (1:1 with BOOKING)
+ CREATE TABLE PAYMENT (
+    Booking_id INT UNSIGNED PRIMARY KEY, -- PK and FK
+    Amount DECIMAL(10, 2) NOT NULL,
+    Payment_date DATE NOT NULL,
+    Payment_time TIME NOT NULL,
+    Payment_status ENUM('SUCCESS', 'FAILED', 'REFUNDED') NOT NULL,
+    Payment_method VARCHAR(50),
+    FOREIGN KEY (Booking_id) REFERENCES BOOKING(Booking_id)
+        ON DELETE CASCADE ON UPDATE CASCADE
+ );-- LOYALTY_POINT Table (1:1 with USER)
+ CREATE TABLE LOYALTY_POINT (
+    LoyaltyPoints_id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    User_id INT UNSIGNED UNIQUE NOT NULL, -- 1:1 enforced by UNIQUE constraint
+    Points_earned INT UNSIGNED DEFAULT 0,
+    Points_redeemed INT UNSIGNED DEFAULT 0,
+    Updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (User_id) REFERENCES USER(User_id)
+        ON DELETE CASCADE ON UPDATE CASCADE
+ );
+ 2. Query Optimization (DQL/DML)
+ Examples showing how to leverage indexes for efficient data retrieval and modification.-- A. Find Available Shows in a City on a Specific Date
+ SELECT
+    M.Title,
+    S.Show_time,
+    S.Price,
+    S.Available_seats,
+    H.Name AS Hall_Name
+ FROM
+    SHOW S
+ JOIN
+    MOVIE M ON S.Movie_id = M.Movie_id
+ JOIN
+    HALL H ON S.Hall_id = H.Hall_id
+ JOIN
+    LOCATION L ON H.Location_id = L.Location_id
+ WHERE
+    L.City = 'Chennai'
+    AND S.Show_date = '2025-12-01'
+    AND S.Available_seats > 0
+ ORDER BY
+    S.Show_time;-- B. Retrieve a User's Recent Booking History
+ SELECT
+    B.Booking_id,
+    M.Title,
+    B.Seats_booked,
+    B.Total_price,
+    B.Booking_status,
+    P.Payment_status
+ FROM
+    BOOKING B
+ JOIN
+    SHOW S ON B.Show_id = S.Show_id
+ JOIN
+    MOVIE M ON S.Movie_id = M.Movie_id
+ LEFT JOIN
+    PAYMENT P ON B.Booking_id = P.Booking_id
+ WHERE
+    B.User_id = 50
+ ORDER BY
+    B.Booking_time DESC;-- C. Critical Update: Decrement Available Seats (transactional flow)
+ START TRANSACTION;
+ INSERT INTO BOOKING (User_id, Show_id, Seats_booked, Total_price)
+ VALUES (101, 5, 3, 450.00);
+ SET @new_booking_id = LAST_INSERT_ID();
+ UPDATE SHOW
+ SET Available_seats = Available_seats - 3
+ WHERE Show_id = 5 AND Available_seats >= 3;
+ UPDATE BOOKING
+ SET Booking_status = 'CONFIRMED'
+ WHERE Booking_id = @new_booking_id;
+ COMMIT;
+ 3. Triggers for Data Integrity and Automation
+ Triggers automate critical business logic, ensuring related data across tables remains consistent.
+ DELIMITER //
+ CREATE TRIGGER after_booking_status_change
+ AFTER UPDATE ON BOOKING
+ FOR EACH ROW
+ BEGIN
+    IF OLD.Booking_status != 'CONFIRMED' AND NEW.Booking_status = 'CONFIRMED' THEN
+        UPDATE SHOW
+        SET Available_seats = Available_seats - NEW.Seats_booked
+        WHERE Show_id = NEW.Show_id;
+    ELSEIF OLD.Booking_status = 'CONFIRMED' AND NEW.Booking_status = 'CANCELLED' THEN
+        UPDATE SHOW
+        SET Available_seats = Available_seats + NEW.Seats_booked
+        WHERE Show_id = NEW.Show_id;
+    END IF;
+ END //
+ DELIMITER ;
+ DELIMITER //
+ CREATE TRIGGER after_successful_payment
+ AFTER INSERT ON PAYMENT
+ FOR EACH ROW
+BEGIN
+    DECLARE v_user_id INT UNSIGNED;
+    DECLARE v_points_to_award INT UNSIGNED;
+    IF NEW.Payment_status = 'SUCCESS' THEN
+        SELECT User_id INTO v_user_id
+        FROM BOOKING
+        WHERE Booking_id = NEW.Booking_id;
+        SET v_points_to_award = FLOOR(NEW.Amount / 100) * 5;
+        INSERT INTO LOYALTY_POINT (User_id, Points_earned)
+        VALUES (v_user_id, v_points_to_award)
+        ON DUPLICATE KEY UPDATE
+            Points_earned = Points_earned + v_points_to_award,
+            Updated_at = CURRENT_TIMESTAMP;
+    END IF;
+ END //
+ DELIMITER ;
+ 4. File Handling Reference (Metadata)
+ Store file references (poster URLs) in the MOVIE table rather than blobs, keeping the DB lean.
+ INSERT INTO MOVIE (Title, Genre, Duration, Poster_url)
+ VALUES (
+    'Scope Cinema Exclusive',
+    'Drama',
+    135,
+    'https://storage.cinemasite.com/posters/scope_exclusive_2025.jpg'
