@@ -8,7 +8,7 @@
 	<title>Welcome to Film Booking System</title>
 </svelte:head>
 
-<main class="mx-auto max-w-full space-y-8">
+<main class="max-w-full space-y-8">
 	<section class="flex flex-col items-center">
 		<Carousel movies={data.movies} />
 	</section>

@@ -102,7 +102,9 @@
 			<ArrowRightIcon class="h-6 w-6" />
 		</button>
 
-		<h1 class="text-center">Now Showing</h1>
+		<div class="mx-auto mb-4 flex max-w-7xl justify-center border-b border-gray-300 p-5 pb-2">
+			<h1 class="text-xl">Now Showing</h1>
+		</div>
 
 		<div class="card h-[450px] overflow-hidden">
 			<div
