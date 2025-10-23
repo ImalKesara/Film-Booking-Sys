@@ -189,3 +189,53 @@ BEGIN
     'Drama',
     135,
     'https://storage.cinemasite.com/posters/scope_exclusive_2025.jpg'
+
+-- 5. Loyalty Points Calculation Function
+DELIMITER //
+CREATE FUNCTION calculate_loyalty_points(booking_amount DECIMAL(10,2))
+RETURNS INT UNSIGNED
+READS SQL DATA
+DETERMINISTIC
+BEGIN
+    DECLARE points INT UNSIGNED DEFAULT 0;
+    
+    -- Basic rule: 1 point per $10 spent
+    SET points = FLOOR(booking_amount / 10);
+    
+    -- Bonus points for higher spending
+    IF booking_amount >= 100 THEN
+        SET points = points + 10; -- Bonus 10 points for $100+
+    END IF;
+    
+    IF booking_amount >= 200 THEN
+        SET points = points + 20; -- Additional 20 points for $200+
+    END IF;
+    
+    RETURN points;
+END //
+DELIMITER ;
+-- Updated trigger using the function
+DELIMITER //
+CREATE TRIGGER after_successful_payment_v2
+AFTER INSERT ON PAYMENT
+FOR EACH ROW
+BEGIN
+    DECLARE v_user_id INT UNSIGNED;
+    DECLARE v_points_to_award INT UNSIGNED;
+    
+    IF NEW.Payment_status = 'SUCCESS' THEN
+        SELECT User_id INTO v_user_id
+        FROM BOOKING
+        WHERE Booking_id = NEW.Booking_id;
+        
+        -- Use the function to calculate points
+        SET v_points_to_award = calculate_loyalty_points(NEW.Amount);
+        
+        INSERT INTO LOYALTY_POINT (User_id, Points_earned)
+        VALUES (v_user_id, v_points_to_award)
+        ON DUPLICATE KEY UPDATE
+            Points_earned = Points_earned + v_points_to_award,
+            Updated_at = CURRENT_TIMESTAMP;
+    END IF;
+END //
+DELIMITER ;

@@ -6,6 +6,7 @@ import com.backend.repository.BookingRepository;
 import com.backend.repository.PaymentRepository;
 import com.backend.security.dto.PaymentDto;
 import lombok.AllArgsConstructor;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,6 +17,7 @@ public class PaymentService {
 
     private final PaymentRepository repo;
     private final BookingRepository bookingRepo;
+    private final JdbcTemplate jdbcTemplate;
 
     public Payment createPayment(PaymentDto dto){
         Booking booking = bookingRepo.findById(dto.getBooking())
@@ -41,6 +43,11 @@ public class PaymentService {
 
     public void delete(Long id){
         repo.deleteById(id);
+    }
+
+    public int calculateLoyaltyPoints(double bookingAmount) {
+        String sql = "SELECT calculate_loyalty_points(?)";
+        return jdbcTemplate.queryForObject(sql, Integer.class, bookingAmount);
     }
 
 }
