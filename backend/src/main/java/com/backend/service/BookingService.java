@@ -55,12 +55,10 @@ public class BookingService {
         jdbcTemplate.update("CALL sp_create_payment_for_booking(?, ?, ?)",
                 booking.getBookingId(), paymentDto.getAmount(), paymentDto.getPaymentMethod());
 
-        // Attach a transient Payment object to the booking for return (optional)
-        Payment p = new Payment();
-        p.setAmount(paymentDto.getAmount());
-        p.setPaymentMethod(paymentDto.getPaymentMethod());
-        p.setBooking(booking);
-        booking.setPayment(p);
+        // Do not attach a transient Payment entity here.
+        // Attaching a new Payment with CascadeType.ALL would cause Hibernate to try inserting
+        // another Payment row for the same booking_id, leading to a unique key violation.
+        // The stored procedure has already created the Payment row in DB.
         return booking;
     }
 
