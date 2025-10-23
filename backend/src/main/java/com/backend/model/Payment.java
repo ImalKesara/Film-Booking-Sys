@@ -1,5 +1,6 @@
 package com.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,6 +24,7 @@ public class Payment {
 
     @OneToOne
     @JoinColumn(name = "booking_id", unique = true)
+    @JsonIgnore
     private Booking booking;
 }
 

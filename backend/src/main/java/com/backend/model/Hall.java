@@ -1,5 +1,6 @@
 package com.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,6 +27,7 @@ public class Hall {
 
     @ManyToOne
     @JoinColumn(name = "location_id")
+    @JsonIgnore
     private Location location;
 
     @OneToMany(mappedBy = "hall", cascade = CascadeType.ALL)
