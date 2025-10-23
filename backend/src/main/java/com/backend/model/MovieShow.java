@@ -1,5 +1,6 @@
 package com.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,10 +30,12 @@ public class MovieShow {
 
     @ManyToOne
     @JoinColumn(name = "movie_id")
+    @JsonIgnore
     private Movie movie;
 
     @ManyToOne
     @JoinColumn(name = "hall_id")
+    @JsonIgnore
     private Hall hall;
 
     @OneToMany(mappedBy = "movieShow", cascade = CascadeType.ALL)
