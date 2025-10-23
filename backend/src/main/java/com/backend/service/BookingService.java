@@ -2,13 +2,17 @@ package com.backend.service;
 
 import com.backend.model.Booking;
 import com.backend.model.MovieShow;
+import com.backend.model.Payment;
 import com.backend.model.User;
 import com.backend.repository.BookingRepository;
 import com.backend.repository.MovieShowRepository;
 import com.backend.repository.UserRepository;
 import com.backend.security.dto.BookingDto;
+import com.backend.security.dto.PaymentDto;
 import lombok.AllArgsConstructor;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -19,6 +23,7 @@ public class BookingService {
     private final BookingRepository bookingRepo;
     private final UserRepository userRepo;
     private final MovieShowRepository showRepo;
+    private final JdbcTemplate jdbcTemplate; // used to showcase calling stored procedures
 
 
 //    creating booking by users
@@ -38,6 +43,23 @@ public class BookingService {
 
         return bookingRepo.save(booking);
 
+    }
+
+    // Transactional example: create a booking and its payment atomically
+    @Transactional
+    public Booking createBookingWithPayment(BookingDto bookingDto, PaymentDto paymentDto) {
+        Booking booking = createBooking(bookingDto);
+
+        // Demonstrate calling a stored procedure to create the payment
+        // Procedure: sp_create_payment_for_booking(booking_id, amount, method)
+        jdbcTemplate.update("CALL sp_create_payment_for_booking(?, ?, ?)",
+                booking.getBookingId(), paymentDto.getAmount(), paymentDto.getPaymentMethod());
+
+        // Do not attach a transient Payment entity here.
+        // Attaching a new Payment with CascadeType.ALL would cause Hibernate to try inserting
+        // another Payment row for the same booking_id, leading to a unique key violation.
+        // The stored procedure has already created the Payment row in DB.
+        return booking;
     }
 
 //    get all booking details
