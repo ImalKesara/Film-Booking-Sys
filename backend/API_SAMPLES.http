@@ -1,0 +1,157 @@
+### Base
+@baseUrl = http://localhost:8080
+
+### 1) Register users (ADMIN and USER)
+# Note: AuthController accepts the full User object. Field names must match the User model.
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "Alice Admin",
+  "email": "admin@example.com",
+  "phone": "+94 77 123 4567",
+  "password": "Admin@123",
+  "dateOfBirth": "1990-05-20",
+  "userRole": "ADMIN"
+}
+
+### Register a normal USER
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "Bob User",
+  "email": "user@example.com",
+  "phone": "+94 71 555 0000",
+  "password": "User@123",
+  "dateOfBirth": "1995-08-12",
+  "userRole": "USER"
+}
+
+### 2) Login to get JWT (use the email in the `username` field)
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "user@example.com",
+  "password": "User@123"
+}
+
+### Save the token from the response as a variable (manually in your client) like:
+# @token = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+### 3) Admin-only: Create a Location
+# Requires ADMIN role if your security rules enforce it for /api/admin/** (they do).
+# You can temporarily set the Authorization header to an ADMIN token (login as admin first).
+POST {{baseUrl}}/api/admin/location
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "name": "Liberty Plaza",
+  "city": "Colombo",
+  "address": "No. 250, Galle Road, Colombo 03"
+}
+
+### 4) Admin-only: Create a Hall
+POST {{baseUrl}}/api/admin/hall
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "name": "Hall A",
+  "totalSeats": 120,
+  "location": 1
+}
+
+### 5) Admin-only: Create a Movie
+POST {{baseUrl}}/api/admin/movie
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "title": "Inception",
+  "description": "A skilled thief enters dreams to steal secrets.",
+  "rating": 8.8,
+  "posterUrl": "https://image.tmdb.org/t/p/w500/inception.jpg",
+  "backDropPathUrl": "https://image.tmdb.org/t/p/original/inception-bg.jpg",
+  "tmdbId": "27205"
+}
+
+### 6) Admin-only: Create a Movie Show
+# Note: showDate must be YYYY-MM-DD, showTime must be HH:MM:SS
+POST {{baseUrl}}/api/admin/movie-show
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "showDate": "2025-10-25",
+  "showTime": "19:30:00",
+  "price": 1500,
+  "availableSeats": 120,
+  "movie": 1,
+  "hall": 1
+}
+
+### 7) Public: List movies visible to users
+GET {{baseUrl}}/api/user/movie
+
+### 8) Create a Booking only (public in current config)
+# Note: BookingDto includes a payment field that is not used during creation but is required by validation.
+# Provide a dummy value like 0 to satisfy validation.
+POST {{baseUrl}}/api/booking
+Content-Type: application/json
+
+{
+  "bookingTime": "2025-10-25T18:45:00",
+  "bookingStatus": "CONFIRMED",
+  "sheetsBooked": 2,
+  "totalPrice": 3000,
+  "user": 2,
+  "movieShow": 1,
+  "payment": 0
+}
+
+### 9) Create a Payment for a booking (public in current config)
+POST {{baseUrl}}/api/payment
+Content-Type: application/json
+
+{
+  "amount": 3000,
+  "paymentMethod": "CARD",
+  "booking": 1
+}
+
+### 10) Create Booking WITH Payment in ONE transaction (USER role required)
+# This calls the stored procedure sp_create_payment_for_booking under the hood.
+# Also, if totalPrice > 4000, the trigger trg_award_loyalty_after_booking will award loyalty points.
+POST {{baseUrl}}/api/booking/with-payment
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "booking": {
+    "bookingTime": "2025-10-25T20:00:00",
+    "bookingStatus": "CONFIRMED",
+    "sheetsBooked": 3,
+    "totalPrice": 4500,
+    "user": 2,
+    "movieShow": 1,
+    "payment": 0
+  },
+  "amount": 4500,
+  "paymentMethod": "CARD"
+}
+
+### 11) Verify created resources
+GET {{baseUrl}}/api/booking
+GET {{baseUrl}}/api/payment
+
+### 12) Verify secured endpoint works
+GET {{baseUrl}}/api/test
+Authorization: {{token}}
+
+### Notes
+# - Use ADMIN token for /api/admin/** endpoints, USER token for /api/booking/with-payment.
+# - The loyalty trigger awards 100 points automatically when booking.totalPrice > 4000.
+# - The view v_show_sales_summary can be queried directly in MySQL: SELECT * FROM v_show_sales_summary;
