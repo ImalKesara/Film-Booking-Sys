@@ -34,6 +34,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/user/movie/**").permitAll()
+                        // Restrict booking with payment to USER role
+                        .requestMatchers("/api/booking/with-payment").hasAuthority(UserRole.USER.name())
+                        // Other booking endpoints remain publicly accessible as before
                         .requestMatchers("/api/booking/**").permitAll()
                         .requestMatchers("/api/payment/**").permitAll()
                         .requestMatchers("/api/admin/movie/**").hasAuthority(UserRole.ADMIN.name())
