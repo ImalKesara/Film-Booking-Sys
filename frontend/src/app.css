@@ -6,6 +6,7 @@
 @import '@skeletonlabs/skeleton';
 @import '@skeletonlabs/skeleton-svelte';
 @import '@skeletonlabs/skeleton/themes/nouveau';
+@import '@skeletonlabs/skeleton/themes/cerberus';
 @custom-variant dark (&:where([data-mode="dark"], [data-mode="dark"] *));
 
 /* Poppins fonts */
