@@ -239,3 +239,74 @@ BEGIN
     END IF;
 END //
 DELIMITER ;
+
+
+
+
+-- TG1030
+
+
+-- Revenue Report Stored Procedure
+DELIMITER //
+
+CREATE PROCEDURE sp_generate_revenue_report(
+    IN start_date DATE,
+    IN end_date DATE
+)
+BEGIN
+    -- Revenue summary
+    SELECT 
+        'REVENUE_SUMMARY' as report_type,
+        COUNT(DISTINCT p.payment_id) as total_transactions,
+        SUM(p.amount) as total_revenue,
+        AVG(p.amount) as average_transaction,
+        MIN(p.amount) as min_transaction,
+        MAX(p.amount) as max_transaction,
+        COUNT(DISTINCT b.user_id) as unique_customers
+    FROM payment p
+    JOIN booking b ON p.booking_id = b.booking_id
+    WHERE DATE(p.created_at) BETWEEN start_date AND end_date;
+    
+    -- Daily revenue breakdown
+    SELECT 
+        'DAILY_BREAKDOWN' as report_type,
+        DATE(p.created_at) as revenue_date,
+        COUNT(p.payment_id) as daily_transactions,
+        SUM(p.amount) as daily_revenue
+    FROM payment p
+    JOIN booking b ON p.booking_id = b.booking_id
+    WHERE DATE(p.created_at) BETWEEN start_date AND end_date
+    GROUP BY DATE(p.created_at)
+    ORDER BY revenue_date;
+    
+    -- Movie-wise revenue
+    SELECT 
+        'MOVIE_REVENUE' as report_type,
+        m.title as movie_title,
+        COUNT(p.payment_id) as bookings_count,
+        SUM(p.amount) as movie_revenue,
+        AVG(p.amount) as avg_booking_amount
+    FROM payment p
+    JOIN booking b ON p.booking_id = b.booking_id
+    JOIN `show` s ON b.show_id = s.show_id
+    JOIN movie m ON s.movie_id = m.movie_id
+    WHERE DATE(p.created_at) BETWEEN start_date AND end_date
+    GROUP BY m.movie_id, m.title
+    ORDER BY movie_revenue DESC;
+    
+    -- Payment method breakdown
+    SELECT 
+        'PAYMENT_METHOD' as report_type,
+        p.payment_method,
+        COUNT(p.payment_id) as method_count,
+        SUM(p.amount) as method_revenue,
+        ROUND((SUM(p.amount) * 100.0 / (SELECT SUM(amount) FROM payment p2 JOIN booking b2 ON p2.booking_id = b2.booking_id WHERE DATE(p2.created_at) BETWEEN start_date AND end_date)), 2) as percentage
+    FROM payment p
+    JOIN booking b ON p.booking_id = b.booking_id
+    WHERE DATE(p.created_at) BETWEEN start_date AND end_date
+    GROUP BY p.payment_method
+    ORDER BY method_revenue DESC;
+    
+END //
+
+DELIMITER ;
