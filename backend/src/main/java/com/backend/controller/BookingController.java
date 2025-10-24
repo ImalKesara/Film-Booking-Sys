@@ -2,6 +2,7 @@ package com.backend.controller;
 
 import com.backend.model.Booking;
 import com.backend.security.dto.BookingDto;
+import com.backend.security.dto.UserBookingHistoryDto;
 import com.backend.service.BookingService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -36,6 +37,12 @@ public class BookingController {
     public String delete(@PathVariable Long id){
         service.delete(id);
         return "Booking deleted successfully!";
+    }
+    
+    // Index to get user booking history
+    @GetMapping("/user/{userId}/history")
+    public List<UserBookingHistoryDto> getUserBookingHistory(@PathVariable Long userId) {
+        return service.getUserBookingHistory(userId);
     }
 
 }
