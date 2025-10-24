@@ -45,4 +45,18 @@ public class BookingController {
         return service.getUserBookingHistory(userId);
     }
 
+    // Trigger to Update loyalty points
+    @PostMapping("/{bookingId}/loyalty-points")
+    public String updateLoyaltyPoints(@PathVariable Long bookingId) {
+        Booking booking = service.getById(bookingId);
+        service.updateLoyaltyPointsAfterBooking(booking.getUser().getUserId(), booking.getTotalPrice());
+        return "Loyalty points updated successfully for booking: " + bookingId;
+    }
+    
+    @GetMapping("/user/{userId}/loyalty-points")
+    public String getUserLoyaltyPoints(@PathVariable Long userId) {
+        // This would require LoyaltyPointService injection
+        return "User " + userId + " loyalty points: [points would be shown here]";
+    }
+
 }

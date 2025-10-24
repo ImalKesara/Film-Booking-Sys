@@ -310,3 +310,27 @@ BEGIN
 END //
 
 DELIMITER ;
+
+-- Loyalty Points Update Stored Procedure
+DELIMITER //
+
+CREATE PROCEDURE update_loyalty_points_after_booking(
+    IN user_id BIGINT,
+    IN booking_amount DOUBLE
+)
+BEGIN
+    DECLARE points_to_add INT DEFAULT 0;
+    
+    -- Calculate loyalty points (1 point for every LKR 100 spent)
+    SET points_to_add = FLOOR(booking_amount / 100);
+    
+    -- Insert or update loyalty points for the user
+    INSERT INTO loyalty_points (user_id, points, created_at, updated_at)
+    VALUES (user_id, points_to_add, NOW(), NOW())
+    ON DUPLICATE KEY UPDATE 
+        points = points + points_to_add,
+        updated_at = NOW();
+        
+END //
+
+DELIMITER ;

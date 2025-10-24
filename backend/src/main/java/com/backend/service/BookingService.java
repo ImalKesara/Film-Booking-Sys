@@ -43,7 +43,14 @@ public class BookingService {
         booking.setUser(user);
         booking.setMovieShow(show);
 
-        return bookingRepo.save(booking);
+        Booking savedBooking = bookingRepo.save(booking);
+        
+        // Auto-add loyalty points for confirmed bookings
+        if ("CONFIRMED".equals(savedBooking.getBookingStatus())) {
+            updateLoyaltyPointsAfterBooking(user.getUserId(), savedBooking.getTotalPrice());
+        }
+        
+        return savedBooking;
 
     }
 
@@ -132,6 +139,17 @@ public class BookingService {
         }
         
         return history;
+    }
+    
+    // Update loyalty points after successful booking (1 point per LKR 100)
+    public void updateLoyaltyPointsAfterBooking(Long userId, double bookingAmount) {
+        try {
+            String sql = "CALL update_loyalty_points_after_booking(?, ?)";
+            jdbcTemplate.update(sql, userId, bookingAmount);
+            System.out.println("Loyalty points updated for user: " + userId + ", amount: " + bookingAmount);
+        } catch (Exception e) {
+            System.out.println("Failed to update loyalty points: " + e.getMessage());
+        }
     }
 
 }
