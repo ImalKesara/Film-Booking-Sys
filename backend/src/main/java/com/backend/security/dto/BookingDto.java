@@ -3,6 +3,7 @@ package com.backend.security.dto;
 import com.backend.model.MovieShow;
 import com.backend.model.Payment;
 import com.backend.model.User;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.Min;
@@ -28,7 +29,7 @@ public class BookingDto {
     private Long user;
     @NotNull
     private Long movieShow;
-    @NotNull
+    @Nullable
     private Long payment;
 
 

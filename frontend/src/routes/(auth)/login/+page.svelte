@@ -25,10 +25,16 @@
 
 				auth.login(token);
 
-				if (auth.user?.role === 'ADMIN') {
-					goto('/admin');
+				const redirectUrl = sessionStorage.getItem('redirectAfterLogin');
+				if (redirectUrl) {
+					sessionStorage.removeItem('redirectAfterLogin');
+					goto(redirectUrl);
 				} else {
-					goto('/me');
+					if (auth.user?.role === 'ADMIN') {
+						goto('/admin');
+					} else {
+						goto('/me');
+					}
 				}
 			} else {
 				// Handle login error

@@ -1,5 +1,5 @@
 import { browser } from '$app/environment';
-import { redirect } from '@sveltejs/kit';
+
 
 type User = {
 	id: number;

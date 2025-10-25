@@ -24,6 +24,7 @@ export interface MovieDto {
 	backDropPathUrl: string | null;
 	tmdbId: string;
 	createdAt: string;
+	movieShows: HallDto[];
 }
 
 export interface HallDto {
