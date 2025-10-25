@@ -69,5 +69,11 @@ public class MovieShowService {
         String sql = "SELECT * FROM v_available_shows";
         return jdbcTemplate.queryForList(sql);
     }
+    
+    // Get user booking summary from view
+    public List<Map<String, Object>> getUserBookingSummary() {
+        String sql = "SELECT * FROM v_user_booking_summary";
+        return jdbcTemplate.queryForList(sql);
+    }
 
 }

@@ -45,9 +45,16 @@ public class MovieShowController {
         return service.getAvailableSeats(id);
     }
     
+    // Function - get all available shows
     @GetMapping("/available")
     public List<Map<String, Object>> getAvailableShows() {
         return service.getAvailableShows();
+    }
+    
+    // View - get user booking summary
+    @GetMapping("/user-summary")
+    public List<Map<String, Object>> getUserBookingSummary() {
+        return service.getUserBookingSummary();
     }
 
 }
