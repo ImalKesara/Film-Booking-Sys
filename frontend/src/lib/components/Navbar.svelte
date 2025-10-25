@@ -8,11 +8,13 @@
 	import { fullname } from '$lib/utils';
 	import SearchMovies from './SearchMovies.svelte';
 	import SearchMovieModal from './SearchMovieModal.svelte';
+	import Drawer from './Drawer.svelte';
 
 	let loading: boolean = $state(false);
 	let showResults: boolean = $state(false);
 	let movies = $state([]);
 	let error = $state('');
+	let drawerCollapse = $state(false);
 
 	const logout = () => {
 		auth.logout();
@@ -42,12 +44,19 @@
 			loading = false;
 		}
 	}
+	$inspect(drawerCollapse);
 </script>
 
 <AppBar>
 	<AppBar.Toolbar class="grid-cols-[1fr_2fr_1fr]">
-		<AppBar.Lead>
-			<button type="button" class="btn-icon btn-icon-lg hover:preset-tonal"><MenuIcon /></button>
+		<AppBar.Lead class="flex gap-x-1">
+			{#if auth.isAuthenticated}
+				<button
+					type="button"
+					class="btn-icon btn-icon-lg hover:preset-tonal"
+					onclick={() => (drawerCollapse = !drawerCollapse)}><MenuIcon /></button
+				>
+			{/if}
 		</AppBar.Lead>
 		<AppBar.Headline class="flex justify-center gap-2">
 			{#if auth.isAuthenticated}
@@ -55,25 +64,24 @@
 					<a href="/admin/dashboard">Dashboard</a>
 					<a href="/admin">Home</a>
 					<a href="/admin/bucket">Bucket</a>
-					<a href="/admin/slot">Slot</a>
 				{/if}
+			{:else}
+				<!-- search bar -->
+				<SearchMovies onsearch={handleSearch} />
 			{/if}
-
-			<!-- search bar -->
-			<SearchMovies onsearch={handleSearch} />
 		</AppBar.Headline>
 		<AppBar.Trail class="items-center justify-end">
 			<ThemeController />
-			<!-- <button type="button" class="btn preset-filled-primary-500 rounded-none uppercase text-white"
-				>buy tickets
-			</button> -->
-			{#if auth.isAuthenticated}
-				<Avatar class="size-8 p-3">
+			{#if !auth.isAuthenticated}
+				<a class="btn preset-tonal-surface uppercase" href="/login">login</a>
+			{:else}
+				<button
+					class="btn preset-filled-primary-500 btn-sm rounded-none uppercase text-white"
+					onclick={logout}>Login out</button
+				>
+				<Avatar class="preset-filled-primary-50-950 size-8 p-3">
 					<Avatar.Fallback>{fullname(auth.user?.name)}</Avatar.Fallback>
 				</Avatar>
-				<button class="btn preset-filled-primary-500 uppercase" onclick={logout}>Login out</button>
-			{:else}
-				<a class="btn preset-tonal-surface uppercase" href="/login">login</a>
 			{/if}
 		</AppBar.Trail>
 	</AppBar.Toolbar>
@@ -81,4 +89,8 @@
 
 {#if showResults}
 	<SearchMovieModal bind:isVisible={showResults} {loading} {movies} />
+{/if}
+
+{#if drawerCollapse}
+	<Drawer showDrawer={drawerCollapse} />
 {/if}

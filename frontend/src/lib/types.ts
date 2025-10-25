@@ -25,3 +25,19 @@ export interface MovieDto {
 	tmdbId: string;
 	createdAt: string;
 }
+
+export interface HallDto {
+	hallId: number;
+	name: string;
+	totalSeats: number;
+	location: string;
+	movieShows: [];
+}
+
+export interface Locations {
+	locationId: number;
+	name: string;
+	city: string;
+	address: string;
+	halls: HallDto[];
+}

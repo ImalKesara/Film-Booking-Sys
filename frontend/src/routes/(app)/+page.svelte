@@ -10,6 +10,8 @@
 
 <main class="max-w-full space-y-8">
 	<section class="flex flex-col items-center">
+
+		<!-- Coming soon movies -->
 		<Carousel movies={data.movies} />
 	</section>
 </main>

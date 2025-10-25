@@ -43,7 +43,7 @@
 
 <div class="w-full space-y-6">
 	<!-- Auto-Scrolling Backdrop Section -->
-	<div class="rounded-container-token relative h-[800px] w-full overflow-hidden">
+	<div class="rounded-container-token relative h-[600px] w-full overflow-hidden">
 		{#if movies.length > 0}
 			{#each movies as movie, index}
 				<div
@@ -103,7 +103,7 @@
 		</button>
 
 		<div class="mx-auto mb-4 flex max-w-7xl justify-center border-b border-gray-300 p-5 pb-2">
-			<h1 class="text-xl">Upcoming Movies</h1>
+			<h1 class="text-xl">Coming Soon !!!</h1>
 		</div>
 
 		<div class="card h-[450px] overflow-hidden">
