@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/admin/movie-show")
@@ -42,6 +43,11 @@ public class MovieShowController {
     @GetMapping("/{id}/available-seats")
     public int getAvailableSeats(@PathVariable Long id) {
         return service.getAvailableSeats(id);
+    }
+    
+    @GetMapping("/available")
+    public List<Map<String, Object>> getAvailableShows() {
+        return service.getAvailableShows();
     }
 
 }

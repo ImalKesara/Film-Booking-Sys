@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @AllArgsConstructor
 @Service
@@ -61,6 +62,12 @@ public class MovieShowService {
     public int getAvailableSeats(Long showId) {
         String sql = "SELECT get_available_seats(?)";
         return jdbcTemplate.queryForObject(sql, Integer.class, showId);
+    }
+    
+    // Get all shows with available seats from view
+    public List<Map<String, Object>> getAvailableShows() {
+        String sql = "SELECT * FROM v_available_shows";
+        return jdbcTemplate.queryForList(sql);
     }
 
 }

@@ -372,3 +372,24 @@ BEGIN
 END //
 
 DELIMITER ;
+
+-- View to see available shows
+
+CREATE VIEW v_available_shows AS
+SELECT 
+    ms.showId,
+    m.title as movieTitle,
+    ms.showDate,
+    ms.showTime,
+    ms.price,
+    h.name as hallName,
+    h.totalSeats,
+    l.name as locationName,
+    l.city,
+    get_available_seats(ms.showId) as availableSeats
+FROM movieshow ms
+JOIN movie m ON ms.movie_id = m.movieId
+JOIN hall h ON ms.hall_id = h.hallId
+JOIN location l ON h.location_id = l.locationId
+WHERE get_available_seats(ms.showId) > 0
+ORDER BY ms.showDate, ms.showTime;
