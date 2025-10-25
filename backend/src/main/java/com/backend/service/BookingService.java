@@ -43,14 +43,22 @@ public class BookingService {
         booking.setUser(user);
         booking.setMovieShow(show);
 
-        Booking savedBooking = bookingRepo.save(booking);
-        
-        // Auto-add loyalty points for confirmed bookings
-        if ("CONFIRMED".equals(savedBooking.getBookingStatus())) {
-            updateLoyaltyPointsAfterBooking(user.getUserId(), savedBooking.getTotalPrice());
+        try {
+            Booking savedBooking = bookingRepo.save(booking);
+            
+            // Auto-add loyalty points for confirmed bookings
+            if ("CONFIRMED".equals(savedBooking.getBookingStatus())) {
+                updateLoyaltyPointsAfterBooking(user.getUserId(), savedBooking.getTotalPrice());
+            }
+            
+            return savedBooking;
+            // Trigger is used here to handle overbooking at the database level
+        } catch (Exception e) {
+            if (e.getMessage().contains("Booking rejected")) {
+                throw new RuntimeException(e.getMessage());
+            }
+            throw new RuntimeException("Booking failed: " + e.getMessage());
         }
-        
-        return savedBooking;
 
     }
 
