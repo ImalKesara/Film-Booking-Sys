@@ -43,7 +43,7 @@
 
 <div class="w-full space-y-6">
 	<!-- Auto-Scrolling Backdrop Section -->
-	<div class="rounded-container-token relative h-[800px] w-full overflow-hidden">
+	<div class="rounded-container-token relative h-[600px] w-full overflow-hidden">
 		{#if movies.length > 0}
 			{#each movies as movie, index}
 				<div
