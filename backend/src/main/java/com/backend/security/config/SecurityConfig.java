@@ -40,12 +40,12 @@ public class SecurityConfig {
                         .requestMatchers("/api/admin/movie/**").hasAuthority(UserRole.ADMIN.name())
                         .requestMatchers("/api/admin/location/**").hasAuthority(UserRole.ADMIN.name())
                         .requestMatchers("/api/admin/hall/**").hasAuthority(UserRole.ADMIN.name())
-                        .requestMatchers("/api/admin/movie-show/**").hasAuthority(UserRole.ADMIN.name())
+                        .requestMatchers("/api/admin/movie-show/**").hasAnyAuthority(UserRole.ADMIN.name(), UserRole.USER.name())
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authenticationProvider(authenticationProvider());
-                // .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .authenticationProvider(authenticationProvider())
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

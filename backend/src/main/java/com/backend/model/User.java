@@ -40,11 +40,14 @@ public class User  implements UserDetails{
     private UserRole userRole;
 
     public UserRole getRole() {
-        return this.userRole; // Verify `role` contains valid UserRole
+        return this.userRole;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        if (userRole == null) {
+            return List.of(new SimpleGrantedAuthority("USER"));
+        }
         return List.of(new SimpleGrantedAuthority(userRole.name()));
     }
 

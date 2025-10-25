@@ -8,6 +8,7 @@ import com.backend.repository.MovieRepository;
 import com.backend.repository.MovieShowRepository;
 import com.backend.security.dto.MovieShowDto;
 import lombok.AllArgsConstructor;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,6 +20,7 @@ public class MovieShowService {
     private final MovieShowRepository repo;
     private final MovieRepository movieRepo;
     private final HallRepository hallRepo;
+    private final JdbcTemplate jdbcTemplate;
 
 //    create show
     public MovieShow createShow(MovieShowDto dto){
@@ -53,6 +55,12 @@ public class MovieShowService {
 //    delete show
     public void delete(Long id){
         repo.deleteById(id);
+    }
+    
+    // Get available seats for a show using stored function
+    public int getAvailableSeats(Long showId) {
+        String sql = "SELECT get_available_seats(?)";
+        return jdbcTemplate.queryForObject(sql, Integer.class, showId);
     }
 
 }

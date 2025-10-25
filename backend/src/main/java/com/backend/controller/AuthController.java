@@ -1,6 +1,7 @@
 package com.backend.controller;
 
 import com.backend.model.User;
+import com.backend.model.UserRole;
 import com.backend.repository.UserRepository;
 import com.backend.security.dto.AuthRequest;
 import com.backend.security.jwt.JwtService;
@@ -36,6 +37,9 @@ public class AuthController {
     @PostMapping("/register")
     public String register(@RequestBody User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        if (user.getUserRole() == null) {
+            user.setUserRole(UserRole.USER); // Set default role
+        }
         userRepository.save(user);
         return "User registered successfully!";
     }

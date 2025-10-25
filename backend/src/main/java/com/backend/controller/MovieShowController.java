@@ -37,5 +37,11 @@ public class MovieShowController {
         service.delete(id);
         return "Movie Show deleted successfully!";
     }
+    
+    // Function - get available seats for a movie show
+    @GetMapping("/{id}/available-seats")
+    public int getAvailableSeats(@PathVariable Long id) {
+        return service.getAvailableSeats(id);
+    }
 
 }

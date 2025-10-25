@@ -334,3 +334,41 @@ BEGIN
 END //
 
 DELIMITER ;
+
+-- Get available seat count - Function
+
+DELIMITER //
+
+CREATE FUNCTION get_available_seats(show_id BIGINT)
+RETURNS INT
+READS SQL DATA
+DETERMINISTIC
+BEGIN
+    DECLARE total_capacity INT DEFAULT 0;
+    DECLARE booked_seats INT DEFAULT 0;
+    DECLARE available_seats INT DEFAULT 0;
+    
+    -- Get hall capacity for the show
+    SELECT h.capacity INTO total_capacity
+    FROM movieshow ms
+    JOIN hall h ON ms.hall_id = h.hallId
+    WHERE ms.showId = show_id;
+    
+    -- Get total booked seats for this show
+    SELECT COALESCE(SUM(b.sheetsBooked), 0) INTO booked_seats
+    FROM booking b
+    WHERE b.show_id = show_id 
+    AND b.bookingStatus IN ('CONFIRMED', 'PENDING');
+    
+    -- Calculate available seats
+    SET available_seats = total_capacity - booked_seats;
+    
+    -- Ensure non-negative result
+    IF available_seats < 0 THEN
+        SET available_seats = 0;
+    END IF;
+    
+    RETURN available_seats;
+END //
+
+DELIMITER ;
