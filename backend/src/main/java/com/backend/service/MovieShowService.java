@@ -75,5 +75,29 @@ public class MovieShowService {
         String sql = "SELECT * FROM v_user_booking_summary";
         return jdbcTemplate.queryForList(sql);
     }
+    
+    // Get shows by date and hall - uses idx_show_datetime_hall index
+    public List<Map<String, Object>> getShowsByDateAndHall(String showDate, Long hallId) {
+        String sql = "SELECT ms.showId, ms.showDate, ms.showTime, ms.price, " +
+                    "m.title as movieTitle, h.name as hallName " +
+                    "FROM movieshow ms " +
+                    "JOIN movie m ON ms.movie_id = m.movieId " +
+                    "JOIN hall h ON ms.hall_id = h.hallId " +
+                    "WHERE ms.showDate = ? AND ms.hall_id = ? " +
+                    "ORDER BY ms.showTime";
+        return jdbcTemplate.queryForList(sql, showDate, hallId);
+    }
+    
+    // Get shows by date range - uses idx_show_datetime_hall index
+    public List<Map<String, Object>> getShowsByDateRange(String startDate, String endDate) {
+        String sql = "SELECT ms.showId, ms.showDate, ms.showTime, ms.price, " +
+                    "m.title as movieTitle, h.name as hallName " +
+                    "FROM movieshow ms " +
+                    "JOIN movie m ON ms.movie_id = m.movieId " +
+                    "JOIN hall h ON ms.hall_id = h.hallId " +
+                    "WHERE ms.showDate BETWEEN ? AND ? " +
+                    "ORDER BY ms.showDate, ms.showTime";
+        return jdbcTemplate.queryForList(sql, startDate, endDate);
+    }
 
 }

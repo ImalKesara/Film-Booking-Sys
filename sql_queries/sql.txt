@@ -246,7 +246,7 @@ DELIMITER ;
 -- TG1030
 
 
--- Revenue Report Stored Procedure
+-- Revenue Report - Stored Procedure
 DELIMITER //
 
 CREATE PROCEDURE sp_generate_revenue_report(
@@ -311,7 +311,7 @@ END //
 
 DELIMITER ;
 
--- Loyalty Points Update Stored Procedure
+-- Loyalty Points Update - Stored Procedure
 DELIMITER //
 
 CREATE PROCEDURE update_loyalty_points_after_booking(
@@ -373,7 +373,7 @@ END //
 
 DELIMITER ;
 
--- View to see available shows
+-- View: see available shows
 
 CREATE VIEW v_available_shows AS
 SELECT 
@@ -415,4 +415,31 @@ LEFT JOIN booking b ON u.userId = b.user_id
 LEFT JOIN loyaltypoint lp ON u.userId = lp.user_id
 GROUP BY u.userId, u.name, u.email, lp.pointsEarned
 ORDER BY totalSpending DESC;
+
+
+-- Trigger : Prevent overbooking when booking
+
+-- 1. Get hall capacity for the show
+SELECT h.totalSeats INTO hall_capacity
+FROM movieshow ms JOIN hall h ON ms.hall_id = h.hallId
+WHERE ms.showId = NEW.show_id;
+
+-- 2. Count currently booked seats (CONFIRMED + PENDING)
+SELECT COALESCE(SUM(b.sheetsBooked), 0) INTO current_booked_seats
+FROM booking b
+WHERE b.show_id = NEW.show_id 
+AND b.bookingStatus IN ('CONFIRMED', 'PENDING');
+
+-- 3. Calculate available seats
+SET available_seats = hall_capacity - current_booked_seats;
+
+-- 4. Block if insufficient seats
+IF NEW.sheetsBooked > available_seats THEN
+    SIGNAL SQLSTATE '45000' 
+    SET MESSAGE_TEXT = 'Booking rejected: Insufficient seats available';
+END IF;
+
+
+--Index: Create composite index for show scheduling queries
+CREATE INDEX idx_show_datetime_hall ON movieshow (showDate, showTime, hall_id);
 

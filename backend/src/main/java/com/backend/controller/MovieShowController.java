@@ -56,5 +56,20 @@ public class MovieShowController {
     public List<Map<String, Object>> getUserBookingSummary() {
         return service.getUserBookingSummary();
     }
+    
+    // Index - get shows by date and hall
+    @GetMapping("/schedule")
+    public List<Map<String, Object>> getShowsByDateAndHall(
+            @RequestParam String showDate,
+            @RequestParam Long hallId) {
+        return service.getShowsByDateAndHall(showDate, hallId);
+    }
+    
+    @GetMapping("/schedule/range")
+    public List<Map<String, Object>> getShowsByDateRange(
+            @RequestParam String startDate,
+            @RequestParam String endDate) {
+        return service.getShowsByDateRange(startDate, endDate);
+    }
 
 }
