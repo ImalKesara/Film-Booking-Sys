@@ -18,6 +18,7 @@
 
 	const logout = () => {
 		auth.logout();
+		sessionStorage.removeItem('redirectAfterLogin');
 		goto('/');
 	};
 

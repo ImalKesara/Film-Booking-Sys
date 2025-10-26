@@ -25,18 +25,18 @@
 
 				auth.login(token);
 				await auth.fetchUser();
-				
 				const redirectUrl = sessionStorage.getItem('redirectAfterLogin');
 
 				if (redirectUrl) {
-					sessionStorage.removeItem('redirectAfterLogin');
+					// sessionStorage.removeItem('redirectAfterLogin');
 					goto(redirectUrl);
-				}
-				if (auth.user) {
-					if (auth.user.role === 'ADMIN') {
-						goto('/admin');
-					} else {
-						goto('/me');
+				} else {
+					if (auth.user) {
+						if (auth.user.role === 'ADMIN') {
+							goto('/admin');
+						} else {
+							goto('/me');
+						}
 					}
 				}
 			} else {

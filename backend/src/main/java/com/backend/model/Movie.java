@@ -14,6 +14,12 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(
+
+        indexes = {
+                @Index(name = "idx_movie_title", columnList = "title")
+        }
+)
 public class Movie {
 
     @Id

@@ -38,7 +38,6 @@ class AuthState {
 
 			if (response.ok) {
 				this.user = await response.json();
-				console.log('fetched user', this.user);
 			} else {
 				this.logout();
 			}
