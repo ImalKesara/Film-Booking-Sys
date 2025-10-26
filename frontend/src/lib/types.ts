@@ -42,3 +42,13 @@ export interface Locations {
 	address: string;
 	halls: HallDto[];
 }
+
+export interface Seats {
+	id: number;
+	status: string;
+}
+
+export enum seatStatus {
+	AVAILABLE,
+	BOOKED
+}

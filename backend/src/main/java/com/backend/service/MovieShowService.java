@@ -3,13 +3,17 @@ package com.backend.service;
 import com.backend.model.Hall;
 import com.backend.model.Movie;
 import com.backend.model.MovieShow;
+import com.backend.model.ShowSeat;
 import com.backend.repository.HallRepository;
 import com.backend.repository.MovieRepository;
 import com.backend.repository.MovieShowRepository;
+import com.backend.repository.ShowSeatRepository;
 import com.backend.security.dto.MovieShowDto;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -19,8 +23,10 @@ public class MovieShowService {
     private final MovieShowRepository repo;
     private final MovieRepository movieRepo;
     private final HallRepository hallRepo;
+    private final ShowSeatRepository showSeatRepository;
 
-//    create show
+    // create show with auto seat generation
+    @Transactional
     public MovieShow createShow(MovieShowDto dto){
         Movie movie = movieRepo.findById(dto.getMovie())
                 .orElseThrow(() -> new RuntimeException("Movie not found with id: " + dto.getMovie()));
@@ -35,22 +41,39 @@ public class MovieShowService {
         show.setMovie(movie);
         show.setHall(hall);
 
-        return repo.save(show);
+        MovieShow saved = repo.save(show);
 
+        // auto-generate seats (IDs will auto-increment)
+        int total = dto.getAvailableSeats();
+        List<ShowSeat> seats = new ArrayList<>(total);
+        for (int i = 1; i <= total; i++) {
+            ShowSeat seat = new ShowSeat();
+            seat.setMovieShow(saved);
+            seat.setStatus(ShowSeat.SeatStatus.AVAILABLE);
+            seats.add(seat);
+        }
+        showSeatRepository.saveAll(seats);
+        return saved;
     }
 
-//    get all shows
+    // get all shows
     public List<MovieShow> getAll(){
         return repo.findAll();
     }
 
-//    get show by id
+    public List<ShowSeat> getSeatsForShow(Long showId) {
+        // will throw if show doesn't exist
+        getById(showId);
+        return showSeatRepository.findAllByMovieShow_ShowIdOrderByIdAsc(showId);
+    }
+
+    // get show by id
     public MovieShow getById(Long id){
         return repo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Movie Show not found with id: " + id));
     }
 
-//    delete show
+    // delete show
     public void delete(Long id){
         repo.deleteById(id);
     }

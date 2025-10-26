@@ -4,6 +4,7 @@ import com.backend.model.Booking;
 import com.backend.security.dto.BookingDto;
 import com.backend.security.dto.BookingWithPaymentRequest;
 import com.backend.security.dto.PaymentDto;
+import com.backend.security.dto.SeatBookingRequest;
 import com.backend.service.BookingService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -23,6 +24,8 @@ public class BookingController {
     public Booking create(@Valid @RequestBody BookingDto dto){
         return service.createBooking(dto);
     }
+
+
 
     // New endpoint: create booking together with its payment in a single transaction
     @PostMapping("/with-payment")
