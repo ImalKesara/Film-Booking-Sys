@@ -1,4 +1,10 @@
 package com.backend.repository;
 
-public interface ShowSalesSummaryRepository {
+import com.backend.model.ShowSalesSummary;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface ShowSalesSummaryRepository extends JpaRepository<ShowSalesSummary,Long> {
+
 }

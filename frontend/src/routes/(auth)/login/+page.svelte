@@ -91,10 +91,10 @@
 		<input class="input" type="password" bind:value={password} />
 	</label>
 
-	<button type="submit" class="btn preset-filled-primary-500 text-white" disabled={loading}
+	<button type="submit" class="btn preset-filled-secondary-500 text-white font-semibold rounded-none" disabled={loading}
 		>{loading ? 'Logging in...' : 'Login'}</button
 	>
 	<p class="text-center text-sm">
-		Don't have an account? <a href="/register" class="text-primary-500">Register</a>
+		Don't have an account? <a href="/register" class="text-secondary-500">Register</a>
 	</p>
 </form>
