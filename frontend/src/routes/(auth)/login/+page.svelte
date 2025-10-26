@@ -24,13 +24,16 @@
 				const token = data.token;
 
 				auth.login(token);
-
+				await auth.fetchUser();
+				
 				const redirectUrl = sessionStorage.getItem('redirectAfterLogin');
+
 				if (redirectUrl) {
 					sessionStorage.removeItem('redirectAfterLogin');
 					goto(redirectUrl);
-				} else {
-					if (auth.user?.role === 'ADMIN') {
+				}
+				if (auth.user) {
+					if (auth.user.role === 'ADMIN') {
 						goto('/admin');
 					} else {
 						goto('/me');
@@ -53,7 +56,7 @@
 			if (auth.isAdmin) {
 				goto('/admin');
 			} else {
-				goto('/');
+				goto('/me');
 			}
 		}
 	});
@@ -88,7 +91,7 @@
 		<input class="input" type="password" bind:value={password} />
 	</label>
 
-	<button type="submit" class="btn preset-outlined-surface-500" disabled={loading}
+	<button type="submit" class="btn preset-filled-primary-500 text-white" disabled={loading}
 		>{loading ? 'Logging in...' : 'Login'}</button
 	>
 	<p class="text-center text-sm">

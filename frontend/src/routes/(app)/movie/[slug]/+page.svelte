@@ -9,7 +9,7 @@
 
 	const handleUserAuth = () => {
 		if (auth.isAuthenticated && auth.isAdmin) {
-			alert('Admins cannot book tickets.This feature is only for regular user');
+			goto('/admin');
 			return;
 		}
 

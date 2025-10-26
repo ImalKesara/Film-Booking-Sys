@@ -11,4 +11,4 @@
 </script>
 
 <input type="text" placeholder="Search Movies" class="input max-w-xl" bind:value={searchTerm} />
-<button class="btn preset-filled-primary-500" onclick={searchMovies}>Search</button>
+<button class="btn preset-filled-warning-500 text-white" onclick={searchMovies}>Search</button>

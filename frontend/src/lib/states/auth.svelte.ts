@@ -1,6 +1,5 @@
 import { browser } from '$app/environment';
 
-
 type User = {
 	id: number;
 	email: string;
@@ -28,14 +27,23 @@ class AuthState {
 	}
 
 	async fetchUser() {
-		const response = await fetch('/api/auth/me', {
-			headers: {
-				Authorization: `Bearer ${this.token}`
+		if (!this.token) return;
+
+		try {
+			const response = await fetch('/api/auth/me', {
+				headers: {
+					Authorization: `Bearer ${this.token}`
+				}
+			});
+
+			if (response.ok) {
+				this.user = await response.json();
+				console.log('fetched user', this.user);
+			} else {
+				this.logout();
 			}
-		});
-		if (response.ok) {
-			this.user = await response.json();
-		} else {
+		} catch (error) {
+			console.error('Error fetching user:', error);
 			this.logout();
 		}
 	}
