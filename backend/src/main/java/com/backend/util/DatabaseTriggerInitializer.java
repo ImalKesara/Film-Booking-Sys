@@ -26,9 +26,13 @@ public class DatabaseTriggerInitializer implements CommandLineRunner {
         try {
             // MySQL stores trigger metadata in information_schema.triggers
             String triggerName = "trg_award_loyalty_after_booking";
-            String triggerExistsSql = "SELECT COUNT(*) FROM information_schema.TRIGGERS WHERE TRIGGER_NAME = ?";
+            String triggerExistsSql = "SELECT COUNT(*) FROM information_schema.TRIGGERS WHERE TRIGGER_SCHEMA = DATABASE() AND TRIGGER_NAME = ?";
             Integer count = jdbcTemplate.queryForObject(triggerExistsSql, Integer.class, triggerName);
-            if (!Objects.equals(count, 1)) {
+            if (count == null || count == 0) {
+                createTrigger();
+            } else {
+                // Recreate to ensure latest definition
+                dropTriggerIfExists(triggerName);
                 createTrigger();
             }
         } catch (Exception e) {
@@ -42,16 +46,25 @@ public class DatabaseTriggerInitializer implements CommandLineRunner {
         // Tables: Booking, LoyaltyPoint
         // Columns: totalPrice (Booking), user_id (Booking & LoyaltyPoint), pointsEarned, createdAt
         String createTriggerSql =
-                "CREATE TRIGGER trg_award_loyalty_after_booking " +
-                "AFTER INSERT ON Booking FOR EACH ROW " +
+                "CREATE TRIGGER `trg_award_loyalty_after_booking` " +
+                "AFTER INSERT ON `Booking` FOR EACH ROW " +
                 "BEGIN " +
-                "  IF NEW.totalPrice > 4000 THEN " +
-                "    INSERT INTO LoyaltyPoint (pointsEarned, createdAt, user_id) " +
-                "    VALUES (100, NOW(), NEW.user_id) " +
-                "    ON DUPLICATE KEY UPDATE pointsEarned = pointsEarned + 100; " +
+                "  IF NEW.`totalPrice` > 4000 THEN " +
+                "    INSERT INTO `LoyaltyPoint` (`pointsEarned`, `createdAt`, `user_id`) " +
+                "    VALUES (100, NOW(), NEW.`user_id`) " +
+                "    ON DUPLICATE KEY UPDATE `pointsEarned` = `pointsEarned` + 100;" +
                 "  END IF; " +
                 "END";
         jdbcTemplate.execute(createTriggerSql);
         System.out.println("[LoyaltyTrigger] Created trigger trg_award_loyalty_after_booking");
+    }
+
+    private void dropTriggerIfExists(String triggerName) {
+        try {
+            jdbcTemplate.execute("DROP TRIGGER IF EXISTS `" + triggerName + "`");
+            System.out.println("[LoyaltyTrigger] Dropped existing trigger if present: " + triggerName);
+        } catch (Exception e) {
+            System.err.println("[LoyaltyTrigger] Failed to drop trigger (continuing): " + e.getMessage());
+        }
     }
 }

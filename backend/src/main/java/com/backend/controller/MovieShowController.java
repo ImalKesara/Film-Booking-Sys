@@ -1,6 +1,7 @@
 package com.backend.controller;
 
 import com.backend.model.MovieShow;
+import com.backend.model.ShowSeat;
 import com.backend.security.dto.MovieShowDto;
 import com.backend.service.MovieShowService;
 import jakarta.validation.Valid;
@@ -31,6 +32,7 @@ public class MovieShowController {
     public MovieShow getById(@PathVariable Long id) {
         return service.getById(id);
     }
+
 
     @DeleteMapping("/{id}")
     public String delete(@PathVariable Long id) {

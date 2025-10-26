@@ -24,6 +24,7 @@ export interface MovieDto {
 	backDropPathUrl: string | null;
 	tmdbId: string;
 	createdAt: string;
+	movieShows: HallDto[];
 }
 
 export interface HallDto {
@@ -40,4 +41,14 @@ export interface Locations {
 	city: string;
 	address: string;
 	halls: HallDto[];
+}
+
+export interface Seats {
+	id: number;
+	status: string;
+}
+
+export enum seatStatus {
+	AVAILABLE,
+	BOOKED
 }

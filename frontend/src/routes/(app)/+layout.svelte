@@ -10,9 +10,22 @@
 	<title>Home page</title>
 </svelte:head>
 
-<Navbar />
-<main>
-	{@render children?.()}
-</main>
+<div class="app-container">
+	<Navbar />
+	<main class="main-content">
+		{@render children?.()}
+	</main>
+	<Footer />
+</div>
 
-<Footer />
+<style>
+	.app-container {
+		min-height: 100vh;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.main-content {
+		flex: 1;
+	}
+</style>
