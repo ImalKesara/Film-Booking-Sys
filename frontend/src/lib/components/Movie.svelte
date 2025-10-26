@@ -43,7 +43,7 @@
 >
 	<header>
 		<img
-			class="h-[450px] w-full object-cover"
+			class="h-[350px] w-full object-cover"
 			src={`https://image.tmdb.org/t/p/original/${movie.poster_path}`}
 			alt="Upcoming movies"
 		/>

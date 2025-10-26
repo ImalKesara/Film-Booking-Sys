@@ -64,7 +64,7 @@
 
 <form
 	onsubmit={login}
-	class="card preset-filled-surface-100-900 flex w-full max-w-md flex-col gap-y-3 p-4"
+	class="card preset-filled-surface-100-900 flex w-full max-w-sm flex-col gap-y-3 p-4"
 >
 	{#if error}
 		<div
