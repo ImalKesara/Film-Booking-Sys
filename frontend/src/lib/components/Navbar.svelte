@@ -18,6 +18,7 @@
 
 	const logout = () => {
 		auth.logout();
+		sessionStorage.removeItem('redirectAfterLogin');
 		goto('/');
 	};
 
@@ -76,12 +77,9 @@
 				<a class="btn preset-tonal-surface uppercase" href="/login">login</a>
 			{:else}
 				<button
-					class="btn preset-filled-primary-500 btn-sm rounded-none uppercase text-white"
+					class="btn preset-filled-primary-500 btn-sm rounded-none uppercase font-semibold"
 					onclick={logout}>Login out</button
 				>
-				<Avatar class="preset-filled-primary-50-950 size-8 p-3">
-					<Avatar.Fallback>{fullname(auth.user?.name)}</Avatar.Fallback>
-				</Avatar>
 			{/if}
 		</AppBar.Trail>
 	</AppBar.Toolbar>

@@ -195,8 +195,6 @@
 	let paymentToggleModal: boolean = $state(false);
 	const token = localStorage.getItem('token');
 
-	$inspect(selectedSeats);
-
 	function toggleSeat(seatId: number) {
 		if (selectedSeats.includes(seatId)) {
 			selectedSeats = selectedSeats.filter((id) => id !== seatId);
@@ -224,6 +222,7 @@
 				title: 'Success',
 				description: 'Book confirmed'
 			});
+
 			goto('/');
 		} else {
 			toaster.error({
@@ -240,18 +239,29 @@
 				Authorization: `Bearer ${token}`
 			}
 		};
-		const [movie, seats, movie_show] = await Promise.all([
-			fetch(`/api/user/movie/${slug}`),
+
+		const movieId = page.url.searchParams.get('slug');
+
+		const [movie, seats, movieshow] = await Promise.all([
+			fetch(`/api/user/movie/${movieId}`),
 			fetch(`/api/auth-user/seatBooking/${slug}/seats`, options),
 			fetch(`/api/auth-user/seatBooking/${slug}`, options)
 		]);
 		if (!movie.ok) throw new Error('Movie not found');
 		if (!seats.ok) throw new Error('Seats are not found');
+		if (!movieshow.ok) throw new Error('Seats are not found');
+
+		// data for movies
 		const data = await movie.json();
-		const dataS = await seats.json();
-		const dataMovieShow = await movie_show.json();
+
+		// data for total seats
+		const seatBooking = await seats.json();
+
+		// data for price
+		const dataMovieShow = await movieshow.json();
+
 		movieData = data;
-		seatsData = dataS;
+		seatsData = seatBooking;
 		movieShow = dataMovieShow;
 	});
 </script>
@@ -305,9 +315,8 @@
 				</div>
 			</div>
 
-			<!-- Movie Info & Booking -->
 			<div class="flex w-full flex-col gap-4">
-				<!-- Movie Poster -->
+				<h1 class="text-center text-xl font-bold">{movieData?.title || 'Loading...'}</h1>
 				<div class="mx-auto w-full max-w-sm overflow-hidden rounded-lg shadow-xl">
 					<img
 						class="h-full w-full object-cover"
@@ -315,8 +324,6 @@
 						alt={movieData?.title || 'Movie poster'}
 					/>
 				</div>
-
-				<h1 class="text-center text-xl font-bold">{movieData?.title || 'Loading...'}</h1>
 			</div>
 
 			<section class="col-span-3">

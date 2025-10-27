@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import { toaster } from '$lib/states/toaster.svelte';
 	import type { HallDto, Locations, MovieDto } from '$lib/types';
 	import { onMount } from 'svelte';
 
@@ -35,10 +36,15 @@
 			})
 		});
 		if (!response.ok) {
-			throw new Error('Something wrong');
+			toaster.error({
+				title: 'Try again'
+			});
 		}
 
-		console.log('Movie show added success');
+		toaster.success({
+			title: 'Added Success',
+			description: 'Movie added successfully'
+		});
 	}
 
 	onMount(async () => {

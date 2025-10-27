@@ -12,7 +12,7 @@
 				{#if loading}
 					Loading...
 				{:else if movies.length > 0 && movies}
-					<div class="grid grid-cols-5 gap-x-2">
+					<div class="grid grid-cols-1 gap-x-2">
 						{#each movies as movie}
 							<div class="card preset-tonal-primary-500 p-4">
 								<header>

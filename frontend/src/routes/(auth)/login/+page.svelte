@@ -24,16 +24,19 @@
 				const token = data.token;
 
 				auth.login(token);
-
+				await auth.fetchUser();
 				const redirectUrl = sessionStorage.getItem('redirectAfterLogin');
+
 				if (redirectUrl) {
-					sessionStorage.removeItem('redirectAfterLogin');
+					// sessionStorage.removeItem('redirectAfterLogin');
 					goto(redirectUrl);
 				} else {
-					if (auth.user?.role === 'ADMIN') {
-						goto('/admin');
-					} else {
-						goto('/me');
+					if (auth.user) {
+						if (auth.user.role === 'ADMIN') {
+							goto('/admin');
+						} else {
+							goto('/me');
+						}
 					}
 				}
 			} else {
@@ -53,7 +56,7 @@
 			if (auth.isAdmin) {
 				goto('/admin');
 			} else {
-				goto('/');
+				goto('/me');
 			}
 		}
 	});
@@ -61,7 +64,7 @@
 
 <form
 	onsubmit={login}
-	class="card preset-filled-surface-100-900 flex w-full max-w-md flex-col gap-y-3 p-4"
+	class="card preset-filled-surface-100-900 flex w-full max-w-sm flex-col gap-y-3 p-4"
 >
 	{#if error}
 		<div
@@ -88,10 +91,10 @@
 		<input class="input" type="password" bind:value={password} />
 	</label>
 
-	<button type="submit" class="btn preset-outlined-surface-500" disabled={loading}
+	<button type="submit" class="btn preset-filled-secondary-500 text-white font-semibold rounded-none" disabled={loading}
 		>{loading ? 'Logging in...' : 'Login'}</button
 	>
 	<p class="text-center text-sm">
-		Don't have an account? <a href="/register" class="text-primary-500">Register</a>
+		Don't have an account? <a href="/register" class="text-secondary-500">Register</a>
 	</p>
 </form>

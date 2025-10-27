@@ -22,9 +22,9 @@ export const load: LayoutLoad = async ({ fetch }) => {
 	}
 
 	const user = await response.json();
-	
-	if (user.role !== 'ADMIN') {
-		redirect(302, '/me');
+
+	if (user.role !== 'USER') {
+		redirect(302, '/admin');
 	}
 
 	return { user };

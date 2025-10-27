@@ -44,6 +44,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/admin/location/**").hasAuthority(UserRole.ADMIN.name())
                         .requestMatchers("/api/admin/hall/**").hasAuthority(UserRole.ADMIN.name())
                         .requestMatchers("/api/admin/movie-show/**").hasAuthority(UserRole.ADMIN.name())
+                        .requestMatchers("/api/admin/sales-summary").hasAuthority(UserRole.ADMIN.name())
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
