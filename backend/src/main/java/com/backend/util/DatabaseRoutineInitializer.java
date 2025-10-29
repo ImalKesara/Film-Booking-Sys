@@ -35,11 +35,6 @@ public class DatabaseRoutineInitializer implements CommandLineRunner {
         } catch (Exception e) {
             System.err.println("[DB Routines] Failed to verify/create procedure: " + e.getMessage());
         }
-        try {
-            ensureViewShowSalesSummary();
-        } catch (Exception e) {
-            System.err.println("[DB Routines] Failed to verify/create view: " + e.getMessage());
-        }
     }
 
     private void ensureFunctionAvailableSeats() {
@@ -89,34 +84,6 @@ public class DatabaseRoutineInitializer implements CommandLineRunner {
                 "END";
             jdbcTemplate.execute(createProc);
             System.out.println("[DB Routines] Created procedure " + procName);
-        }
-    }
-
-    private void ensureViewShowSalesSummary() {
-        String viewName = "v_show_sales_summary";
-        String existsSql = "SELECT COUNT(*) FROM information_schema.VIEWS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ?";
-        Integer count = jdbcTemplate.queryForObject(existsSql, Integer.class, viewName);
-        if (!Objects.equals(count, 1)) {
-            // Drop if exists for safety on case differences
-            try { jdbcTemplate.execute("DROP VIEW IF EXISTS " + viewName); } catch (Exception ignored) {}
-
-            String createView =
-                "CREATE VIEW v_show_sales_summary AS\n" +
-                "SELECT\n" +
-                "  ms.showId AS showId,\n" +
-                "  ms.showDate AS showDate,\n" +
-                "  ms.showTime AS showTime,\n" +
-                "  m.title AS movieTitle,\n" +
-                "  h.name AS hallName,\n" +
-                "  COALESCE(SUM(b.sheetsBooked), 0) AS totalSeatsBooked,\n" +
-                "  COALESCE(SUM(b.totalPrice), 0) AS totalRevenue\n" +
-                "FROM MovieShow ms\n" +
-                "JOIN Movie m ON ms.movie_id = m.movieId\n" +
-                "JOIN Hall h ON ms.hall_id = h.hallId\n" +
-                "LEFT JOIN Booking b ON b.show_id = ms.showId\n" +
-                "GROUP BY ms.showId, ms.showDate, ms.showTime, m.title, h.name";
-            jdbcTemplate.execute(createView);
-            System.out.println("[DB Routines] Created view " + viewName);
         }
     }
 }
