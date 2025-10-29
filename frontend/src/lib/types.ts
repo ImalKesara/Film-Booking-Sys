@@ -33,6 +33,7 @@ export interface Shows {
 	showTime: string;
 	price: number;
 	availableSeats: number;
+	status : string
 }
 
 export interface HallDto {

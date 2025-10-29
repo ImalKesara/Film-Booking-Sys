@@ -1,6 +1,7 @@
 <script lang="ts">
-	import { LineChart, Axis } from 'layerchart';
-	import { curveCatmullRom, curveLinearClosed } from 'd3-shape';
+	import { LineChart, Axis, BarChart } from 'layerchart';
+	import { curveBasis, curveBumpX, curveCatmullRom, curveLinearClosed } from 'd3-shape';
+	import { tick } from 'svelte';
 
 	let { data } = $props();
 
@@ -12,7 +13,7 @@
 	});
 
 	const revenue = data.summaries.reduce((sum, item) => sum + item.totalRevenue, 0);
-	console.log(revenue)
+	console.log(revenue);
 </script>
 
 <section class="mx-auto grid max-w-6xl grid-cols-12">
@@ -52,12 +53,6 @@
 		</table>
 	</div>
 	<div class="col-span-4 h-[300px] rounded-sm border p-4">
-		<LineChart
-			data={dateSeriesData}
-			x="date"
-			y="revenue"
-			props={{ spline: { curve: curveCatmullRom } }}
-			renderContext="svg"
-		/>
+		<BarChart data={dateSeriesData} x="date" y="revenue" renderContext="svg" />
 	</div>
 </section>
