@@ -22,11 +22,15 @@ public class MovieShow {
     private Long showId;
 
     private LocalDate showDate;
+    @Column(columnDefinition = "TIME")
     private LocalTime showTime;
     private double price;
     private int availableSeats;
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(columnDefinition = "VARCHAR(20) DEFAULT 'AVAILABLE'")
+    private String status;
 
     @ManyToOne
     @JoinColumn(name = "movie_id")
@@ -40,5 +44,12 @@ public class MovieShow {
 
     @OneToMany(mappedBy = "movieShow", cascade = CascadeType.ALL)
     private List<Booking> bookings;
+
+    @PrePersist
+    protected void onCreate() {
+        if (status == null) {
+            status = "AVAILABLE";
+        }
+    }
 }
 

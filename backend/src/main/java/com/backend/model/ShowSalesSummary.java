@@ -7,6 +7,9 @@ import jakarta.persistence.Table;
 import lombok.Data;
 import org.hibernate.annotations.Immutable;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+
 @Entity
 @Data
 @Table(name = "v_show_sales_summary")
@@ -18,10 +21,10 @@ public class ShowSalesSummary {
     private Long showId;
 
     @Column(name = "showDate")
-    private String showDate;
+    private LocalDate showDate;
 
     @Column(name = "showTime")
-    private String showTime;
+    private LocalTime showTime;
 
     @Column(name = "movieTitle")
     private String movieTitle;
