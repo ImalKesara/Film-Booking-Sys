@@ -102,8 +102,8 @@
 								type="time"
 								id="appointment"
 								name="appointment"
-								min="09:00"
-								max="18:00"
+								min="08:00"
+								max="21:00"
 								required
 								bind:value={time}
 							/>

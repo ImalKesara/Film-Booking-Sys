@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,6 +77,29 @@ public class MovieShowService {
     // delete show
     public void delete(Long id){
         repo.deleteById(id);
+    }
+
+//    ---------------------------------------------------------------------------
+
+    public List<MovieShow> getAvailableShows() {
+        return repo.findByStatus("AVAILABLE");
+    }
+
+    public List<MovieShow> getSoldOutShows() {
+        return repo.findSoldOutShows();
+    }
+
+    public List<MovieShow> getUpcomingAvailableShows() {
+        return repo.findUpcomingAvailableShows(LocalDate.now());
+    }
+
+    public List<MovieShow> getShowsByMovieAndStatus(Long movieId, String status) {
+        if (status != null && !status.isEmpty()) {
+            return repo.findByMovieAndStatus(movieId, status);
+        }
+        return repo.findAll().stream()
+                .filter(show -> show.getMovie().getMovieId().equals(movieId))
+                .toList();
     }
 
 }

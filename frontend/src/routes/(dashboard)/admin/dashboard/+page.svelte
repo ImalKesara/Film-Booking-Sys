@@ -10,6 +10,9 @@
 			revenue: summary.totalRevenue
 		};
 	});
+
+	const revenue = data.summaries.reduce((sum, item) => sum + item.totalRevenue, 0);
+	console.log(revenue)
 </script>
 
 <section class="mx-auto grid max-w-6xl grid-cols-12">
@@ -43,7 +46,7 @@
 			<tfoot>
 				<tr>
 					<td colspan="6">Total</td>
-					<td class="text-center">{data.summaries.length}</td>
+					<td class="text-start">{revenue}</td>
 				</tr>
 			</tfoot>
 		</table>
