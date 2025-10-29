@@ -5,10 +5,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
+import org.hibernate.annotations.Immutable;
 
 @Entity
 @Data
 @Table(name = "v_show_sales_summary")
+@Immutable
 public class ShowSalesSummary {
 
     @Id
