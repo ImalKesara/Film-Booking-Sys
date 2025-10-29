@@ -13,3 +13,22 @@ JOIN Movie m ON ms.movie_id = m.movieId
 JOIN Hall h ON ms.hall_id = h.hallId
 LEFT JOIN Booking b ON b.show_id = ms.showId
 GROUP BY ms.showId, ms.showDate, ms.showTime, m.title, h.name;
+
+
+-- Get user booking summary details
+CREATE VIEW summary AS
+SELECT 
+    ms.showId,
+    m.title as movieTitle,
+    ms.showDate,
+    ms.showTime,
+    ms.price,
+    h.name as hallName,
+    h.totalSeats,
+    l.name as locationName,
+    l.city
+FROM movieshow ms
+JOIN movie m ON ms.movie_id = m.movieId
+JOIN hall h ON ms.hall_id = h.hallId
+JOIN location l ON h.location_id = l.locationId
+ORDER BY ms.showDate, ms.showTime;
