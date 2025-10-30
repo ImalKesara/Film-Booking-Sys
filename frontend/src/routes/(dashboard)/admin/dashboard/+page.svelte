@@ -1,21 +1,85 @@
 <script lang="ts">
-	import { LineChart, Axis } from 'layerchart';
-	import { curveCatmullRom, curveLinearClosed } from 'd3-shape';
+	import { LineChart, Axis, BarChart, AreaChart, LinearGradient, Area } from 'layerchart';
+	import { curveBasis, curveBumpX, curveCatmullRom, curveLinearClosed } from 'd3-shape';
+	import { onMount, tick } from 'svelte';
+	import { CircleDollarSign, Clapperboard, DollarSign, PiggyBank } from '@lucide/svelte';
 
 	let { data } = $props();
 
-	const dateSeriesData = data.summaries.map((summary) => {
+	const dateSeriesData = data.allRevenue.map((revenue) => {
 		return {
-			date: new Date(summary.showDate),
-			revenue: summary.totalRevenue
+			date: revenue.revenueDate,
+			revenue: revenue.totalRevenue
 		};
 	});
 
 	const revenue = data.summaries.reduce((sum, item) => sum + item.totalRevenue, 0);
-	console.log(revenue)
 </script>
 
-<section class="mx-auto grid max-w-6xl grid-cols-12">
+<section class="mx-auto max-w-6xl">
+	<!-- Card section -->
+	<div class="my-10">
+		<div class="my-3 grid grid-cols-4 gap-x-3">
+			<div class="card preset-filled-surface-100-900 w-full max-w-md p-4">
+				<div class="flex items-center justify-between">
+					<p>Total Revenue</p>
+					<div
+						class="bg-primary-100-900
+			 rounded p-1"
+					>
+						<PiggyBank />
+					</div>
+				</div>
+				<p class="text-xl font-bold">LKR {revenue.toLocaleString('en-US')}</p>
+				<p>All Time</p>
+			</div>
+
+			<div class="card preset-filled-surface-100-900 w-full max-w-md p-4">
+				<div class="flex items-center justify-between">
+					<p>Daily Revenue</p>
+					<div class="bg-secondary-100-900 rounded p-1">
+						<CircleDollarSign />
+					</div>
+				</div>
+				<p class="text-xl font-bold">
+					LKR {data.latestRevenue.totalRevenue.toLocaleString('en-US')}
+				</p>
+				<p>Today Revenue</p>
+			</div>
+
+			<div class="card preset-filled-surface-100-900 w-full max-w-md p-4">
+				<div class="flex items-center justify-between">
+					<p>Total Movies</p>
+					<div class="bg-secondary-100-900 rounded p-1">
+						<Clapperboard />
+					</div>
+				</div>
+				<p class="text-xl font-bold">LKR {revenue.toLocaleString('en-US')}</p>
+				<p>All Time</p>
+			</div>
+
+			<div class="card preset-filled-surface-100-900 w-full max-w-md p-4">
+				<div class="flex items-center justify-between">
+					<p>Total Movies</p>
+					<div class="bg-secondary-100-900 rounded p-1">
+						<Clapperboard />
+					</div>
+				</div>
+				<p class="text-xl font-bold">LKR {revenue.toLocaleString('en-US')}</p>
+				<p>All Time</p>
+			</div>
+		</div>
+	</div>
+
+	<div class="chart">
+		<AreaChart
+			data={dateSeriesData}
+			x="date"
+			y="revenue"
+			props={{ xAxis: { tickSpacing: 100 }, area: { curve: curveCatmullRom } }}
+		/>
+	</div>
+
 	<div class="table-wrap col-span-8">
 		<table class="table caption-bottom">
 			<caption class="pt-4">Revenue Summaries</caption>
@@ -51,13 +115,15 @@
 			</tfoot>
 		</table>
 	</div>
-	<div class="col-span-4 h-[300px] rounded-sm border p-4">
-		<LineChart
-			data={dateSeriesData}
-			x="date"
-			y="revenue"
-			props={{ spline: { curve: curveCatmullRom } }}
-			renderContext="svg"
-		/>
-	</div>
 </section>
+
+<style>
+	.chart {
+		height: 300px;
+	}
+
+	/* Global styles (or can use Tailwind)  */
+	:global(.lc-root-container) {
+		--color-primary: hsl(200 100% 50%);
+	}
+</style>

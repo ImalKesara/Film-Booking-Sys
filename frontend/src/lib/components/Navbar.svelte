@@ -50,15 +50,7 @@
 
 <AppBar>
 	<AppBar.Toolbar class="grid-cols-[1fr_2fr_1fr]">
-		<AppBar.Lead class="flex gap-x-1">
-			{#if auth.isAuthenticated}
-				<button
-					type="button"
-					class="btn-icon btn-icon-lg hover:preset-tonal"
-					onclick={() => (drawerCollapse = !drawerCollapse)}><MenuIcon /></button
-				>
-			{/if}
-		</AppBar.Lead>
+		<AppBar.Lead class="flex gap-x-1 text-xl font-bold capitalize">Legacy-Show</AppBar.Lead>
 		<AppBar.Headline class="flex justify-center gap-2">
 			{#if auth.isAuthenticated}
 				{#if auth.isAdmin}
@@ -77,7 +69,7 @@
 				<a class="btn preset-tonal-surface uppercase" href="/login">login</a>
 			{:else}
 				<button
-					class="btn preset-filled-primary-500 btn-sm rounded-none uppercase font-semibold"
+					class="btn preset-filled-primary-500 btn-sm rounded-none font-semibold uppercase"
 					onclick={logout}>Login out</button
 				>
 			{/if}

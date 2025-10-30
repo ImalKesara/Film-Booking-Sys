@@ -1,191 +1,10 @@
-<!-- <script lang="ts">
-	import { page } from '$app/state';
-	import { auth } from '$lib/states/auth.svelte';
-	import { seatStatus, type MovieDto, type Seats } from '$lib/types';
-	import { onMount } from 'svelte';
-	const slug = page.params.slug;
-	let movieData: MovieDto | null = $state(null);
-	let seatsData: Seats[] = $state([]);
-	let seatNumbers: number[] = $state([]);
-	const token = localStorage.getItem('token');
-
-	async function handlePayment() {
-		const response = await fetch('/api/auth-user/seatBooking/seats-with-payment', {
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${token}`
-			},
-			method: 'POST',
-			body: JSON.stringify({
-				userId: auth.user?.id,
-				showId: slug,
-				seatIds: [1, 2, 3],
-				paymentMethod: 'CARD'
-			})
-		});
-	}
-
-	onMount(async () => {
-		const options = {
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${token}`
-			}
-		};
-		const [movie, seats] = await Promise.all([
-			fetch(`/api/user/movie/${slug}`),
-			fetch(`/api/auth-user/seatBooking/${slug}/seats`, options)
-		]);
-		if (!movie.ok) throw new Error('Movie not found');
-		if (!seats.ok) throw new Error('Seats are not found');
-		const data = await movie.json();
-		const dataS = await seats.json();
-		movieData = data;
-		seatsData = dataS;
-		console.log(seatsData);
-	});
-</script>
-
-<section class="iteml grid grid-cols-5 items-center">
-	<div class="col-span-2">
-		<div class="grid grid-cols-10 gap-3">
-			{#each seatsData as seat}
-				{#if seat.status === "BOOKED"}
-					<button type="button" disabled class="btn preset-filled-tertiary-500 rounded-none"
-						>{seat.id}</button
-					>
-				{:else}
-					<button
-						type="button"
-						class="btn preset-outlined-tertiary-500 rounded-none"
-						onclick={() => {
-							seatNumbers.push(seat.id);
-						}}>{seat.id}</button
-					>
-				{/if}
-			{/each}
-		</div>
-	</div>
-	<div>
-		<h1>{movieData?.title}</h1>
-		<img
-			class="h-full w-full object-cover"
-			src={`https://image.tmdb.org/t/p/original/${movieData?.posterUrl}`}
-			alt="Upcoming movies"
-		/>
-	</div>
-
-	<button class="preset-filled-tertiary-500 rounded-none" onclick={handlePayment}>Book</button>
-</section> -->
-
-<!-- <script lang="ts">
-	import { page } from '$app/state';
-	import { auth } from '$lib/states/auth.svelte';
-	import { seatStatus, type MovieDto, type Seats } from '$lib/types';
-	import { onMount } from 'svelte';
-	const slug = page.params.slug;
-	let movieData: MovieDto | null = $state(null);
-	let seatsData: Seats[] = $state([]);
-	let selectedSeats: number[] = $state([]);
-	const token = localStorage.getItem('token');
-
-	function toggleSeat(seatId: number) {
-		if (selectedSeats.includes(seatId)) {
-			selectedSeats = selectedSeats.filter((id) => id !== seatId);
-		} else {
-			selectedSeats = [...selectedSeats, seatId];
-		}
-	}
-
-	async function handlePayment() {
-		const response = await fetch('/api/auth-user/seatBooking/seats-with-payment', {
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${token}`
-			},
-			method: 'POST',
-			body: JSON.stringify({
-				userId: auth.user?.id,
-				showId: slug,
-				seatIds: selectedSeats,
-				paymentMethod: 'CARD'
-			})
-		});
-	}
-
-	onMount(async () => {
-		const options = {
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${token}`
-			}
-		};
-		const [movie, seats] = await Promise.all([
-			fetch(`/api/user/movie/${slug}`),
-			fetch(`/api/auth-user/seatBooking/${slug}/seats`, options)
-		]);
-		if (!movie.ok) throw new Error('Movie not found');
-		if (!seats.ok) throw new Error('Seats are not found');
-		const data = await movie.json();
-		const dataS = await seats.json();
-		movieData = data;
-		seatsData = dataS;
-		console.log('Seats data:', seatsData);
-	});
-</script>
-
-<section class="iteml grid grid-cols-5 items-center">
-	<div class="col-span-2">
-		<div class="grid grid-cols-10 gap-3">
-			{#each seatsData as seat}
-				<button
-					type="button"
-					disabled={seat.status === 'BOOKED'}
-					class="btn rounded-none {seat.status === 'BOOKED'
-						? 'preset-filled-tertiary-500 cursor-not-allowed opacity-50'
-						: selectedSeats.includes(seat.id)
-							? 'preset-filled-success-500'
-							: 'preset-outlined-tertiary-500'}"
-					onclick={() => {
-						if (seat.status !== 'BOOKED') {
-							toggleSeat(seat.id);
-						}
-					}}
-				>
-					{seat.id}
-				</button>
-			{/each}
-		</div>
-
-		<div class="mt-4">
-			<p>Selected Seats: {selectedSeats.length > 0 ? selectedSeats.join(', ') : 'None'}</p>
-		</div>
-	</div>
-	<div>
-		<h1>{movieData?.title}</h1>
-		<img
-			class="h-full w-full object-cover"
-			src={`https://image.tmdb.org/t/p/original/${movieData?.posterUrl}`}
-			alt="Upcoming movies"
-		/>
-	</div>
-
-	<button
-		class="preset-filled-tertiary-500 rounded-none"
-		onclick={handlePayment}
-		disabled={selectedSeats.length === 0}
-	>
-		Book ({selectedSeats.length} seats)
-	</button>
-</section> -->
-
 <script lang="ts">
 	import { goto, invalidateAll } from '$app/navigation';
 	import { page } from '$app/state';
 	import Payment from '$lib/components/Payment.svelte';
 	import { auth } from '$lib/states/auth.svelte';
 	import { toaster } from '$lib/states/toaster.svelte';
-	import { seatStatus, type MovieDto, type Seats } from '$lib/types';
+	import { seatStatus, type CalculateDiscountPrice, type MovieDto, type Seats } from '$lib/types';
 	import { onMount } from 'svelte';
 	const slug = page.params.slug;
 	let movieData: MovieDto | null = $state(null);
@@ -194,6 +13,7 @@
 	let movieShow = $state(null);
 	let paymentToggleModal: boolean = $state(false);
 	const token = localStorage.getItem('token');
+	let loyalPoints: CalculateDiscountPrice | null = $state(null);
 
 	function toggleSeat(seatId: number) {
 		if (selectedSeats.includes(seatId)) {
@@ -211,10 +31,11 @@
 			},
 			method: 'POST',
 			body: JSON.stringify({
-				userId: auth.user?.id,
+				userId: loyalPoints?.userId,
 				showId: slug,
 				seatIds: selectedSeats,
-				paymentMethod: 'CARD'
+				paymentMethod: 'CARD',
+				discountAmount: loyalPoints?.discountedAmount
 			})
 		});
 		if (response.ok) {
@@ -231,6 +52,39 @@
 			});
 		}
 	}
+
+	const getLoyalPoints = async () => {
+		const userId = auth.user?.id;
+		const response = await fetch(
+			`/api/loyalty-point/reward?userId=${Number(userId)}&amount=${selectedSeats.length * movieShow?.price}`,
+			{
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${token}`
+				}
+			}
+		);
+		const result = await response.json();
+		loyalPoints = result;
+	};
+
+	let isLoadingLoyalty: boolean = $state(false);
+	const openPaymentModal = async () => {
+		isLoadingLoyalty = true;
+		paymentToggleModal = false;
+		try {
+			await getLoyalPoints();
+			paymentToggleModal = true;
+		} catch (e) {
+			console.log(e);
+			toaster.error({
+				title: 'Failed to load loyalty points',
+				description: 'Proceeding without discount.'
+			});
+		} finally {
+			isLoadingLoyalty = false;
+		}
+	};
 
 	onMount(async () => {
 		const options = {
@@ -349,9 +203,7 @@
 						{selectedSeats.length === 0
 							? 'cursor-not-allowed  text-gray-500'
 							: ' preset-filled-warning-500 text-white'}"
-						onclick={() => {
-							paymentToggleModal = true;
-						}}
+						onclick={openPaymentModal}
 						disabled={selectedSeats.length === 0}
 					>
 						{selectedSeats.length === 0
@@ -367,8 +219,8 @@
 {#if paymentToggleModal}
 	<Payment
 		bind:paymentToggle={paymentToggleModal}
-		amount={selectedSeats.length * movieShow?.price}
 		totalSeats={selectedSeats.length}
 		onConfirm={handlePayment}
+		totalAmount={loyalPoints}
 	/>
 {/if}

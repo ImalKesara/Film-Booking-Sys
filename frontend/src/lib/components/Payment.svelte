@@ -1,6 +1,17 @@
 <script lang="ts">
+	import type { CalculateDiscountPrice } from '$lib/types';
 	import { Dialog, Portal } from '@skeletonlabs/skeleton-svelte';
-	let { paymentToggle = $bindable(), amount, totalSeats, onConfirm } = $props();
+	let {
+		paymentToggle = $bindable(),
+		totalSeats,
+		onConfirm,
+		totalAmount
+	}: {
+		paymentToggle: boolean;
+		totalSeats: number;
+		onConfirm: () => Promise<void>;
+		totalAmount: CalculateDiscountPrice | null;
+	} = $props();
 </script>
 
 <Dialog open={paymentToggle} onOpenChange={(e) => (paymentToggle = e.open)}>
@@ -17,13 +28,22 @@
 						<span class="font-semibold">{totalSeats}</span>
 					</div>
 					<div class="flex justify-between text-sm">
-						<span class="text-gray-400">Price per Seat:</span>
-						<span class="font-semibold">Rs. {amount}</span>
+						<span class="text-gray-400">Total price</span>
+						<span class="font-semibold">Rs. {totalAmount?.originalAmount}</span>
+					</div>
+					<div class="flex justify-between text-sm">
+						<span class="text-gray-400"
+							>Discount Applied <span class="text-xs capitalize">(based on loyal points)</span
+							></span
+						>
+						<span class="text-warning-500 font-semibold">Rs. -{totalAmount?.discountApplied}</span>
 					</div>
 					<hr class="hr" />
 					<div class="flex justify-between">
 						<span class="font-bold">Total Amount:</span>
-						<span class="text-primary-500 text-xl font-bold">Rs. {amount}</span>
+						<span class="text-primary-500 text-xl font-bold"
+							>Rs. {totalAmount?.discountedAmount}</span
+						>
 					</div>
 				</div>
 

@@ -9,11 +9,10 @@
 @import '@skeletonlabs/skeleton/themes/cerberus';
 @import '@skeletonlabs/skeleton/themes/crimson';
 
-
 /* Set up theme colors */
-@import '@layerstack/tailwind/core.css';
-@source '../node_modules/layerchart/dist';
 
+@source '../node_modules/layerchart/dist';
+@import 'layerchart/skeleton-3.css';
 @custom-variant dark (&:where([data-mode="dark"], [data-mode="dark"] *));
 
 /* Poppins fonts */

@@ -53,15 +53,28 @@ public class DatabaseTriggerInitializer implements CommandLineRunner {
         switch (triggerName) {
             case "trg_award_loyalty_after_booking":
                 createSql =
-                        "CREATE TRIGGER `trg_award_loyalty_after_booking` " +
-                                "AFTER INSERT ON `Booking` FOR EACH ROW " +
+                        "CREATE TRIGGER trg_award_loyalty_after_booking " +
+                                "AFTER INSERT ON Booking " +
+                                "FOR EACH ROW " +
                                 "BEGIN " +
-                                "  IF NEW.`totalPrice` > 4000 THEN " +
-                                "    INSERT INTO `LoyaltyPoint` (`pointsEarned`, `createdAt`, `user_id`) " +
-                                "    VALUES (100, NOW(), NEW.`user_id`) " +
-                                "    ON DUPLICATE KEY UPDATE `pointsEarned` = `pointsEarned` + 100; " +
+                                "  DECLARE pointsToAdd INT DEFAULT 0; " +
+                                "  " +
+                                "  IF NEW.totalPrice > 20000 THEN " +
+                                "    SET pointsToAdd = 1500; " +
+                                "  ELSEIF NEW.totalPrice >= 10000 THEN " +
+                                "    SET pointsToAdd = 1000; " +
+                                "  ELSEIF NEW.totalPrice > 4500 THEN " +
+                                "    SET pointsToAdd = 500; " +
+                                "  ELSE " +
+                                "    SET pointsToAdd = 0; " +
                                 "  END IF; " +
-                                "END";
+                                "  " +
+                                "  IF pointsToAdd > 0 THEN " +
+                                "    INSERT INTO LoyaltyPoint (pointsEarned, createdAt, user_id) " +
+                                "    VALUES (pointsToAdd, NOW(), NEW.user_id) " +
+                                "    ON DUPLICATE KEY UPDATE pointsEarned = pointsEarned + pointsToAdd; " +
+                                "  END IF; " +
+                                "END;";
                 break;
 
             case "trg_update_show_status_before_update":
