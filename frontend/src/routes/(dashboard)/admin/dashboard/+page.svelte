@@ -54,16 +54,6 @@
 		lossData = dailyLoss;
 	});
 
-	const groupedByDate = $derived(
-		lossData.reduce((acc, item) => {
-			if (!acc[item.date]) {
-				acc[item.date] = [];
-			}
-			acc[item.date].push(item);
-			return acc;
-		}, {})
-	);
-
 	const totalLoss = $derived(lossData.reduce((sum, item) => sum + item.lossamount, 0));
 	const totalEmptySeats = $derived(
 		lossData.reduce((sum, item) => sum + item.notbookedseatcount, 0)
