@@ -9,6 +9,7 @@
 	import SearchMovies from './SearchMovies.svelte';
 	import SearchMovieModal from './SearchMovieModal.svelte';
 	import Drawer from './Drawer.svelte';
+	import { page } from '$app/state';
 
 	let loading: boolean = $state(false);
 	let showResults: boolean = $state(false);
@@ -45,20 +46,25 @@
 			loading = false;
 		}
 	}
-	$inspect(drawerCollapse);
 </script>
 
 <AppBar>
 	<AppBar.Toolbar class="grid-cols-[1fr_2fr_1fr]">
-		<AppBar.Lead class="flex gap-x-1 text-xl font-bold capitalize">Legacy-Show</AppBar.Lead>
-		<AppBar.Headline class="flex justify-center gap-2">
+		<AppBar.Lead class="flex gap-x-1  capitalize">
 			{#if auth.isAuthenticated}
 				{#if auth.isAdmin}
-					<a href="/admin/dashboard">Dashboard</a>
-					<a href="/admin">Home</a>
-					<a href="/admin/bucket">Bucket</a>
+					<a
+						class="btn preset-filled-secondary-500"
+						href="/admin/dashboard"
+						class:active={page.url.pathname === '/admin/dashboard'}>Dashboard</a
+					>
+					<a href="/admin" class:active={page.url.pathname === '/admin'}>Home</a>
+					<a href="/admin/bucket" class:active={page.url.pathname === '/admin/bucket'}>Bucket</a>
 				{/if}
-			{:else}
+			{/if}
+		</AppBar.Lead>
+		<AppBar.Headline class="flex justify-center gap-2">
+			{#if !auth.isAuthenticated}
 				<!-- search bar -->
 				<SearchMovies onsearch={handleSearch} />
 			{/if}
@@ -84,3 +90,14 @@
 {#if drawerCollapse}
 	<Drawer showDrawer={drawerCollapse} />
 {/if}
+
+<style>
+	.active {
+		/* Add your active styles */
+		font-weight: bold;
+		text-decoration: underline;
+		/* or */
+		background-color: var(--color-primary-500);
+		color: white;
+	}
+</style>
