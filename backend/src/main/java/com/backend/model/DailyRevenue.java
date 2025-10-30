@@ -2,11 +2,13 @@ package com.backend.model;
 
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
+@Data
 @Table(name = "DailyRevenue")
 public class DailyRevenue {
     @Id

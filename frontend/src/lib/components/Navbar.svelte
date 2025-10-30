@@ -51,13 +51,13 @@
 <AppBar>
 	<AppBar.Toolbar class="grid-cols-[1fr_2fr_1fr]">
 		<AppBar.Lead class="flex gap-x-1">
-			{#if auth.isAuthenticated}
+			<!-- {#if auth.isAuthenticated}
 				<button
 					type="button"
 					class="btn-icon btn-icon-lg hover:preset-tonal"
 					onclick={() => (drawerCollapse = !drawerCollapse)}><MenuIcon /></button
 				>
-			{/if}
+			{/if} -->
 		</AppBar.Lead>
 		<AppBar.Headline class="flex justify-center gap-2">
 			{#if auth.isAuthenticated}
