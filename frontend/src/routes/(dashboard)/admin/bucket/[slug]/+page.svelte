@@ -103,7 +103,7 @@
 								id="appointment"
 								name="appointment"
 								min="08:00"
-								max="21:00"
+								max="23:30"
 								required
 								bind:value={time}
 							/>

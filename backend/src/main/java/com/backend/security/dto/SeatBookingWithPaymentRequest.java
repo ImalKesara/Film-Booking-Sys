@@ -16,4 +16,6 @@ public class SeatBookingWithPaymentRequest {
     private List<Long> seatIds; // Select seats by their database IDs
     @NotNull
     private String paymentMethod;
+    @NotNull
+    private Long discountAmount;
 }

@@ -3,7 +3,7 @@
 	import { page } from '$app/state';
 	import { auth } from '$lib/states/auth.svelte';
 	import type { MovieDto } from '$lib/types';
-	import { Timer } from '@lucide/svelte';
+	import { CalendarDays, Timer } from '@lucide/svelte';
 	import { onMount } from 'svelte';
 
 	const slug = page.params.slug;
@@ -34,6 +34,7 @@
 			throw new Error('Something wrong !!!!');
 		}
 		data = await response.json();
+		console.log(data?.movieShows);
 	});
 </script>
 
@@ -104,32 +105,41 @@
 				{#if data.movieShows.length > 0}
 					<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
 						{#each data.movieShows as show}
-							<button onclick={() => handleShowSelection(show.showId)}>
-								<div class="card preset-outlined-warning-500 p-4">
-									<div class="relative z-10">
+							{#if show.status === 'SOLD_OUT' || show.status === 'AVAILABLE'}
+								<button
+									onclick={() => handleShowSelection(show.showId)}
+									disabled={show.status === 'SOLD_OUT'}
+									class="w-full"
+								>
+									<div class="rounded-lg bg-orange-500 p-6">
 										<div class="mb-4 flex items-center justify-between">
-											<div class="flex items-center gap-2">
-												<span
-													class="flex items-center justify-center gap-1 text-2xl font-bold text-white"
-													><Timer /> {formatTime(show.showTime)}</span
-												>
+											<div class="space-y-2">
+												<div class="flex gap-2 items-center font-bold text-black">
+													<CalendarDays />
+													{show.showDate}
+												</div>
+												<div class="flex gap-2 items-center font-bold text-black">
+													<Timer />
+													{formatTime(show.showTime)}
+												</div>
 											</div>
-											<div class="rounded-full bg-green-500/20 px-3 py-1">
-												<span class="text-sm font-semibold text-green-400"
-													>{show.availableSeats} seats</span
-												>
-											</div>
-										</div>
-									</div>
 
-									<div class="flex items-center justify-between">
-										<div>
-											<p class="text-sm text-gray-400">Price</p>
-											<p class="text-xl font-bold text-white">LKR {show.price.toFixed(2)}</p>
+											<span
+												class="rounded-full bg-white px-4 py-1 text-sm font-semibold text-black"
+											>
+												{show.availableSeats === 0 ? 'SOLD OUT' : `${show.availableSeats} seats`}
+											</span>
+										</div>
+
+										<div class="text-left">
+											<p class="mb-1 text-sm text-black">Price</p>
+											<p class="text-2xl font-bold text-white">
+												LKR {show.price.toFixed(2)}
+											</p>
 										</div>
 									</div>
-								</div>
-							</button>
+								</button>
+							{/if}
 						{/each}
 					</div>
 				{/if}
