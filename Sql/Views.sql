@@ -32,3 +32,5 @@ JOIN movie m ON ms.movie_id = m.movieId
 JOIN hall h ON ms.hall_id = h.hallId
 JOIN location l ON h.location_id = l.locationId
 ORDER BY ms.showDate, ms.showTime;
+
+

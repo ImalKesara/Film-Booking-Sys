@@ -144,7 +144,7 @@ public class BookingService {
         booking.setBookingTime(LocalDateTime.now());
         booking.setBookingStatus("CONFIRMED");
         booking.setSheetsBooked(seats.size());
-        double total = show.getPrice() * seats.size();
+        double total = request.getDiscountAmount();
         booking.setTotalPrice(total);
         booking.setUser(user);
         booking.setMovieShow(show);

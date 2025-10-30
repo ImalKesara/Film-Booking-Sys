@@ -34,7 +34,8 @@
 				userId: loyalPoints?.userId,
 				showId: slug,
 				seatIds: selectedSeats,
-				paymentMethod: 'CARD'
+				paymentMethod: 'CARD',
+				discountAmount: loyalPoints?.discountedAmount
 			})
 		});
 		if (response.ok) {
@@ -55,7 +56,7 @@
 	const getLoyalPoints = async () => {
 		const userId = auth.user?.id;
 		const response = await fetch(
-			`/api/loyalty-point/reward?userId=${Number(userId)}&amount=${20000}`,
+			`/api/loyalty-point/reward?userId=${Number(userId)}&amount=${selectedSeats.length * movieShow?.price}`,
 			{
 				headers: {
 					'Content-Type': 'application/json',
@@ -65,6 +66,24 @@
 		);
 		const result = await response.json();
 		loyalPoints = result;
+	};
+
+	let isLoadingLoyalty: boolean = $state(false);
+	const openPaymentModal = async () => {
+		isLoadingLoyalty = true;
+		paymentToggleModal = false;
+		try {
+			await getLoyalPoints();
+			paymentToggleModal = true;
+		} catch (e) {
+			console.log(e);
+			toaster.error({
+				title: 'Failed to load loyalty points',
+				description: 'Proceeding without discount.'
+			});
+		} finally {
+			isLoadingLoyalty = false;
+		}
 	};
 
 	onMount(async () => {
@@ -184,10 +203,7 @@
 						{selectedSeats.length === 0
 							? 'cursor-not-allowed  text-gray-500'
 							: ' preset-filled-warning-500 text-white'}"
-						onclick={() => {
-							paymentToggleModal = true;
-							getLoyalPoints();
-						}}
+						onclick={openPaymentModal}
 						disabled={selectedSeats.length === 0}
 					>
 						{selectedSeats.length === 0
@@ -203,8 +219,8 @@
 {#if paymentToggleModal}
 	<Payment
 		bind:paymentToggle={paymentToggleModal}
-		amount={selectedSeats.length * movieShow?.price}
 		totalSeats={selectedSeats.length}
 		onConfirm={handlePayment}
+		totalAmount={loyalPoints}
 	/>
 {/if}
