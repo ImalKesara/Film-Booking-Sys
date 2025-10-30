@@ -33,6 +33,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/users/**").permitAll()
                         .requestMatchers("/api/user/movie/**").permitAll()
                         .requestMatchers("/api/customSql/**").permitAll()
                         // Restrict booking with payment to USER role
@@ -48,6 +49,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/admin/movie-show/**").hasAuthority(UserRole.ADMIN.name())
                         .requestMatchers("/api/admin/sales-summary").hasAuthority(UserRole.ADMIN.name())
                         .requestMatchers("/api/daily-revenue/**").hasAuthority(UserRole.ADMIN.name())
+                        .requestMatchers("/api/dailyLoss/**").hasAuthority(UserRole.ADMIN.name())
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
