@@ -39,3 +39,26 @@ BEGIN
 END $$
 
 DELIMITER ;  
+
+
+
+-- Daily loss
+DELIMITER $$
+
+CREATE EVENT IF NOT EXISTS calculate_daily_loss
+ON SCHEDULE EVERY 1 DAY
+STARTS TIMESTAMP(CURRENT_DATE, '23:55:00')
+DO
+BEGIN
+    INSERT INTO DailyLoss (date, notbookedseatcount, lossamount, show_id, movie_id)
+    SELECT 
+        CURRENT_DATE,
+        availableSeats,
+        (price * availableSeats) AS lossamount,
+        showId,
+        movie_id
+    FROM MovieShow
+    WHERE status = 'EXPIRED';
+END$$
+
+DELIMITER ;

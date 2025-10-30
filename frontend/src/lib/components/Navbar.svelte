@@ -1,11 +1,8 @@
 <script lang="ts">
-	import { MenuIcon } from '@lucide/svelte';
 	import { AppBar } from '@skeletonlabs/skeleton-svelte';
 	import ThemeController from './ThemeController.svelte';
 	import { auth } from '$lib/states/auth.svelte';
 	import { goto } from '$app/navigation';
-	import { Avatar } from '@skeletonlabs/skeleton-svelte';
-	import { fullname } from '$lib/utils';
 	import SearchMovies from './SearchMovies.svelte';
 	import SearchMovieModal from './SearchMovieModal.svelte';
 	import Drawer from './Drawer.svelte';
@@ -54,12 +51,21 @@
 			{#if auth.isAuthenticated}
 				{#if auth.isAdmin}
 					<a
-						class="btn preset-filled-secondary-500"
 						href="/admin/dashboard"
-						class:active={page.url.pathname === '/admin/dashboard'}>Dashboard</a
+						class="btn btn-sm uppercase"
+						class:preset-filled-secondary-500={page.url.pathname === '/admin/dashboard'}
+						>Dashboard</a
 					>
-					<a href="/admin" class:active={page.url.pathname === '/admin'}>Home</a>
-					<a href="/admin/bucket" class:active={page.url.pathname === '/admin/bucket'}>Bucket</a>
+					<a
+						href="/admin"
+						class="btn btn-sm uppercase"
+						class:preset-filled-secondary-500={page.url.pathname === '/admin'}>Home</a
+					>
+					<a
+						href="/admin/bucket"
+						class="btn btn-sm uppercase"
+						class:preset-filled-secondary-500={page.url.pathname === '/admin/bucket'}>Bucket</a
+					>
 				{/if}
 			{/if}
 		</AppBar.Lead>
@@ -90,14 +96,3 @@
 {#if drawerCollapse}
 	<Drawer showDrawer={drawerCollapse} />
 {/if}
-
-<style>
-	.active {
-		/* Add your active styles */
-		font-weight: bold;
-		text-decoration: underline;
-		/* or */
-		background-color: var(--color-primary-500);
-		color: white;
-	}
-</style>

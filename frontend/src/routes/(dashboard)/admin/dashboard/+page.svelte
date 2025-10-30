@@ -1,25 +1,35 @@
 <script lang="ts">
 	import { PieChart, AreaChart } from 'layerchart';
 	import { curveCatmullRom } from 'd3-shape';
-	import { CircleDollarSign, PiggyBank, TrendingUp, Film, Clapperboard } from '@lucide/svelte';
+	import {
+		CircleDollarSign,
+		PiggyBank,
+		TrendingUp,
+		Film,
+		Clapperboard,
+		TrendingDown
+	} from '@lucide/svelte';
 	import type { FilterPieValues } from '$lib/types.js';
+	import { onMount } from 'svelte';
+	const token = localStorage.getItem('token');
+	const options = {
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${token}`
+		}
+	};
 
 	let { data } = $props();
 
 	let selectedLocationId = $state(null);
 	let filteredData: FilterPieValues[] = $state([]);
 	let isLoading = $state(false);
+	let lossData = $state([]);
 
 	async function fetchRevenueByLocation(locationId: number) {
-		const token = localStorage.getItem('token');
 		isLoading = true;
 		try {
-			const response = await fetch(`/api/admin/pie-visualize/${locationId}`, {
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: `Bearer ${token}`
-				}
-			});
+			const response = await fetch(`/api/admin/pie-visualize/${locationId}`, options);
 			const newData = await response.json();
 			filteredData = newData;
 		} catch (error) {
@@ -37,6 +47,27 @@
 	});
 
 	const revenue = data.summaries.reduce((sum, item) => sum + item.totalRevenue, 0);
+
+	onMount(async () => {
+		const response = await fetch('/api/dailyLoss/all', options);
+		const dailyLoss = await response.json();
+		lossData = dailyLoss;
+	});
+
+	const groupedByDate = $derived(
+		lossData.reduce((acc, item) => {
+			if (!acc[item.date]) {
+				acc[item.date] = [];
+			}
+			acc[item.date].push(item);
+			return acc;
+		}, {})
+	);
+
+	const totalLoss = $derived(lossData.reduce((sum, item) => sum + item.lossamount, 0));
+	const totalEmptySeats = $derived(
+		lossData.reduce((sum, item) => sum + item.notbookedseatcount, 0)
+	);
 </script>
 
 <section class="mx-auto max-w-7xl px-4 py-8">
@@ -85,13 +116,13 @@
 
 			<div class="card preset-filled-surface-100-900 w-full p-5 transition-shadow hover:shadow-lg">
 				<div class="flex items-center justify-between">
-					<p class="text-sm font-medium">Total Movies</p>
+					<p class="text-sm font-medium">Daily Loss Report</p>
 					<div class="bg-error-100-900 rounded-lg p-2">
-						<Clapperboard class="h-5 w-5" />
+						<TrendingDown class="h-5 w-5" />
 					</div>
 				</div>
-				<p class="mt-3 text-2xl font-bold">LKR {revenue.toLocaleString('en-US')}</p>
-				<p class="text-surface-600-400 mt-1 text-xs">All Time</p>
+				<p class="mt-3 text-2xl font-bold">-LKR {totalLoss.toLocaleString('en-US')}</p>
+				<p class="text-surface-600-400 mt-1 text-xs">{totalEmptySeats} total empty seats</p>
 			</div>
 		</div>
 	</div>
@@ -234,6 +265,76 @@
 							class="text-surface-900-50 whitespace-nowrap px-6 py-4 text-right text-lg font-bold"
 						>
 							LKR {revenue.toLocaleString('en-US')}
+						</td>
+					</tr>
+				</tfoot>
+			</table>
+		</div>
+	</div>
+
+	<!-- Loss Table -->
+	<div class="card preset-filled-surface-50-900 overflow-hidden">
+		<div class="border-surface-200-800 border-b p-6">
+			<h2 class="text-surface-900-50 text-xl font-bold">Revenue Loss Analysis</h2>
+			<p class="text-surface-600-400 text-sm">Empty seats across all shows</p>
+		</div>
+
+		<div class="overflow-x-auto">
+			<table class="table w-full">
+				<thead class="bg-surface-100-800">
+					<tr>
+						<th
+							class="text-surface-700-300 px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider"
+							>Date</th
+						>
+						<th
+							class="text-surface-700-300 px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider"
+							>Show ID</th
+						>
+						<th
+							class="text-surface-700-300 px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider"
+							>Movie ID</th
+						>
+						<th
+							class="text-surface-700-300 px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider"
+							>Empty Seats</th
+						>
+						<th
+							class="text-surface-700-300 px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider"
+							>Lost Revenue</th
+						>
+					</tr>
+				</thead>
+				<tbody class="divide-surface-200-800 divide-y">
+					{#each lossData as loss}
+						<tr class="hover:bg-surface-100-800 transition-colors duration-150">
+							<td class="text-surface-600-400 whitespace-nowrap px-6 py-4 text-sm">{loss.date}</td>
+							<td class="text-surface-600-400 whitespace-nowrap px-6 py-4 text-sm font-medium"
+								>#{loss.show_id}</td
+							>
+							<td class="text-surface-900-50 px-6 py-4 text-sm font-medium">ID: {loss.movie_id}</td>
+							<td class="whitespace-nowrap px-6 py-4 text-center text-sm">
+								<span
+									class="bg-warning-100-900 text-warning-700-300 rounded px-2 py-1 text-xs font-medium"
+								>
+									{loss.notbookedseatcount}
+								</span>
+							</td>
+							<td
+								class="text-error-600 whitespace-nowrap px-6 py-4 text-right text-sm font-semibold"
+							>
+								-LKR {loss.lossamount.toLocaleString('en-US')}
+							</td>
+						</tr>
+					{/each}
+				</tbody>
+				<tfoot class="bg-surface-100-800">
+					<tr>
+						<td colspan="4" class="text-surface-900-50 px-6 py-4 text-sm font-bold"
+							>Total Revenue Loss</td
+						>
+						<td class="text-error-600 whitespace-nowrap px-6 py-4 text-right text-lg font-bold">
+							-LKR {totalLoss.toLocaleString('en-US')}
 						</td>
 					</tr>
 				</tfoot>
