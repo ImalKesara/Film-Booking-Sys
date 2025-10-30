@@ -68,3 +68,9 @@ export interface CalculateDiscountPrice {
 	originalAmount: number;
 	userId: number;
 }
+
+export interface FilterPieValues {
+	id: number;
+	hall: string;
+	movies: number;
+}
