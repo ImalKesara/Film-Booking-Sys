@@ -11,6 +11,7 @@ class AuthState {
 	token = $state<string | null>(null);
 	user = $state<User | null>(null);
 	isLoading = $state<boolean>(false);
+	notifications = $state([]);
 
 	constructor() {
 		if (browser) {
@@ -23,6 +24,9 @@ class AuthState {
 		if (token) {
 			this.token = token;
 			await this.fetchUser();
+			if (this.user) {
+				await this.notificationsFn();
+			}
 		}
 	}
 
@@ -44,6 +48,21 @@ class AuthState {
 		} catch (error) {
 			console.error('Error fetching user:', error);
 			this.logout();
+		}
+	}
+
+	async notificationsFn() {
+		const response = await fetch(`api/notification/${this.user?.id}`, {
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${localStorage.getItem('token')}`
+			}
+		});
+
+		if (response.ok) {
+			this.notifications = await response.json();
+		} else {
+			console.log('error');
 		}
 	}
 

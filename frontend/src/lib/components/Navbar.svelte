@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { AppBar } from '@skeletonlabs/skeleton-svelte';
+	import { AppBar, Popover, Portal } from '@skeletonlabs/skeleton-svelte';
 	import ThemeController from './ThemeController.svelte';
 	import { auth } from '$lib/states/auth.svelte';
 	import { goto } from '$app/navigation';
@@ -7,12 +7,16 @@
 	import SearchMovieModal from './SearchMovieModal.svelte';
 	import Drawer from './Drawer.svelte';
 	import { page } from '$app/state';
+	import { Bell } from '@lucide/svelte';
+	import { onMount } from 'svelte';
 
 	let loading: boolean = $state(false);
 	let showResults: boolean = $state(false);
 	let movies = $state([]);
 	let error = $state('');
 	let drawerCollapse = $state(false);
+	let notifications = $state([]);
+	let notificationsPopUp = $state(false);
 
 	const logout = () => {
 		auth.logout();
@@ -43,6 +47,10 @@
 			loading = false;
 		}
 	}
+
+	onMount(async () => {
+		notifications = $state.snapshot(auth.notifications);
+	});
 </script>
 
 <AppBar>
@@ -80,6 +88,26 @@
 			{#if !auth.isAuthenticated}
 				<a class="btn preset-tonal-surface uppercase" href="/login">login</a>
 			{:else}
+				<Popover>
+					<Popover.Trigger class="btn-icon hover:preset-tonal"
+						><Bell class="size-5" /></Popover.Trigger
+					>
+					<Portal>
+						<Popover.Positioner>
+							<Popover.Content
+								class="card bg-surface-100-900 max-w-md space-y-2  p-4 shadow-xl"
+							>
+								{#each notifications as notification}
+									<div class="border p-3 rounded">
+										<Popover.Title class="font-bold">Title</Popover.Title>
+										<Popover.Description>{notification.notificationMessage}</Popover.Description>
+									</div>
+								{/each}
+							</Popover.Content>
+						</Popover.Positioner>
+					</Portal>
+				</Popover>
+
 				<button
 					class="btn preset-filled-primary-500 btn-sm rounded-none font-semibold uppercase"
 					onclick={logout}>Login out</button
