@@ -91,7 +91,7 @@
 		<input class="input" type="password" bind:value={password} />
 	</label>
 
-	<button type="submit" class="btn preset-filled-secondary-500 text-white font-semibold rounded-none" disabled={loading}
+	<button type="submit" class="btn preset-filled-primary-500 text-white font-semibold rounded-none" disabled={loading}
 		>{loading ? 'Logging in...' : 'Login'}</button
 	>
 	<p class="text-center text-sm">
