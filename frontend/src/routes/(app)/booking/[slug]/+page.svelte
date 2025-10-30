@@ -4,7 +4,7 @@
 	import Payment from '$lib/components/Payment.svelte';
 	import { auth } from '$lib/states/auth.svelte';
 	import { toaster } from '$lib/states/toaster.svelte';
-	import { seatStatus, type MovieDto, type Seats } from '$lib/types';
+	import { seatStatus, type CalculateDiscountPrice, type MovieDto, type Seats } from '$lib/types';
 	import { onMount } from 'svelte';
 	const slug = page.params.slug;
 	let movieData: MovieDto | null = $state(null);
@@ -13,6 +13,7 @@
 	let movieShow = $state(null);
 	let paymentToggleModal: boolean = $state(false);
 	const token = localStorage.getItem('token');
+	let loyalPoints: CalculateDiscountPrice | null = $state(null);
 
 	function toggleSeat(seatId: number) {
 		if (selectedSeats.includes(seatId)) {
@@ -30,7 +31,7 @@
 			},
 			method: 'POST',
 			body: JSON.stringify({
-				userId: auth.user?.id,
+				userId: loyalPoints?.userId,
 				showId: slug,
 				seatIds: selectedSeats,
 				paymentMethod: 'CARD'
@@ -50,6 +51,21 @@
 			});
 		}
 	}
+
+	const getLoyalPoints = async () => {
+		const userId = auth.user?.id;
+		const response = await fetch(
+			`/api/loyalty-point/reward?userId=${Number(userId)}&amount=${20000}`,
+			{
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${token}`
+				}
+			}
+		);
+		const result = await response.json();
+		loyalPoints = result;
+	};
 
 	onMount(async () => {
 		const options = {
@@ -170,6 +186,7 @@
 							: ' preset-filled-warning-500 text-white'}"
 						onclick={() => {
 							paymentToggleModal = true;
+							getLoyalPoints();
 						}}
 						disabled={selectedSeats.length === 0}
 					>

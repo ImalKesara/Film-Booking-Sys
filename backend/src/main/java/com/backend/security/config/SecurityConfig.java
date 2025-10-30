@@ -38,6 +38,7 @@ public class SecurityConfig {
                         // Restrict booking with payment to USER role
                         .requestMatchers("/api/booking/with-payment").hasAuthority(UserRole.USER.name())
                         .requestMatchers("/api/auth-user/seatBooking/**").hasAuthority(UserRole.USER.name())
+                        .requestMatchers("/api/loyalty-point/**").hasAuthority(UserRole.USER.name())
                         // Other booking endpoints remain publicly accessible as before
                         .requestMatchers("/api/booking/**").permitAll()
                         .requestMatchers("/api/payment/**").permitAll()

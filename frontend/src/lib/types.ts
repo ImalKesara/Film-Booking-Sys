@@ -33,7 +33,7 @@ export interface Shows {
 	showTime: string;
 	price: number;
 	availableSeats: number;
-	status : string
+	status: string;
 }
 
 export interface HallDto {
@@ -60,4 +60,11 @@ export interface Seats {
 export enum seatStatus {
 	AVAILABLE,
 	BOOKED
+}
+
+export interface CalculateDiscountPrice {
+	discountApplied: number;
+	discountedAmount: number;
+	originalAmount: number;
+	userId: number;
 }
