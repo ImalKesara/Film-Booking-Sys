@@ -11,7 +11,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/dailyRevenue")
+@RequestMapping("/api/daily-revenue")
 @AllArgsConstructor
 @CrossOrigin
 public class DailyRevenueController {

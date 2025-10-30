@@ -12,7 +12,7 @@
 /* Set up theme colors */
 
 @source '../node_modules/layerchart/dist';
-
+@import 'layerchart/skeleton-3.css';
 @custom-variant dark (&:where([data-mode="dark"], [data-mode="dark"] *));
 
 /* Poppins fonts */

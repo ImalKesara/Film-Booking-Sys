@@ -6,16 +6,14 @@
 </script>
 
 <main class="w-full py-12">
-	<!-- Section Header -->
 	<div class="mx-auto mb-12 max-w-7xl px-6">
 		<div class="text-center">
 			<h1 class="mb-3 text-4xl font-bold">Now Showing</h1>
 			<p class="text-gray-600 dark:text-gray-400">Book your seats for these amazing movies</p>
 		</div>
-		<div class="mx-auto mt-6 h-1 w-32 preset-filled-warning-500 rounded-full"></div>
+		<div class="preset-filled-warning-500 mx-auto mt-6 h-1 w-32 rounded-full"></div>
 	</div>
 
-	<!-- Movies Grid -->
 	<div class="mx-auto mb-20 max-w-7xl px-6">
 		<div class="grid grid-cols-1 gap-8 md:grid-cols-2">
 			{#each filteredMovieShows as movie}
@@ -23,7 +21,6 @@
 					href="/movie/{movie.movieId}"
 					class="group relative overflow-hidden rounded-2xl shadow-xl transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl"
 				>
-					<!-- Movie Image -->
 					<div class="relative aspect-[16/9] overflow-hidden">
 						<img
 							class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
@@ -32,12 +29,10 @@
 							loading="lazy"
 						/>
 
-						<!-- Dark Gradient Overlay -->
 						<div
 							class="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent opacity-80 transition-opacity duration-300 group-hover:opacity-90"
 						></div>
 
-						<!-- Play Icon (appears on hover) -->
 						<div
 							class="absolute inset-0 flex items-center justify-center opacity-0 transition-all duration-300 group-hover:opacity-100"
 						>
@@ -50,7 +45,6 @@
 							</div>
 						</div>
 
-						<!-- Now Showing Badge -->
 						<div class="absolute right-4 top-4">
 							<span
 								class="flex items-center gap-2 rounded-full bg-green-500 px-4 py-2 text-xs font-bold text-white shadow-lg backdrop-blur-sm"
@@ -67,7 +61,6 @@
 							{movie.title}
 						</h2>
 
-						<!-- Additional Info (shows on hover) -->
 						<div
 							class="translate-y-4 transform opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100"
 						>
@@ -88,7 +81,9 @@
 												d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
 											></path>
 										</svg>
-										<span>{movie.movieShows.length} Showtimes</span>
+										<span
+											>{movie.movieShows.filter((show) => show.status === 'AVAILABLE').length} Showtimes</span
+										>
 									</div>
 								{/if}
 								<div class="flex items-center gap-2 text-sm text-white/90">
@@ -105,7 +100,7 @@
 							</div>
 
 							<button
-								class="flex w-full items-center justify-center gap-2 rounded-lg preset-filled-warning-500 py-3 font-semibold text-white shadow-lg transition-all duration-300 hover:preset-filled-warning-600"
+								class="preset-filled-warning-500 hover:preset-filled-warning-600 flex w-full items-center justify-center gap-2 rounded-lg py-3 font-semibold text-white shadow-lg transition-all duration-300"
 							>
 								<svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
 									<path
@@ -120,7 +115,6 @@
 			{/each}
 		</div>
 
-		<!-- Empty State -->
 		{#if filteredMovieShows.length === 0}
 			<div class="py-20 text-center">
 				<div

@@ -20,6 +20,6 @@ public interface DailyRevenueRepository extends JpaRepository<DailyRevenue,Long>
     DailyRevenue findByRevenueDate(@Param("date") LocalDate date);
 
     // Get all revenues
-    @Query(value = "SELECT * FROM DailyRevenue ORDER BY revenue_date DESC", nativeQuery = true)
+    @Query(value = "SELECT * FROM DailyRevenue ORDER BY revenue_date ASC", nativeQuery = true)
     List<DailyRevenue> findAllRevenues();
 }
