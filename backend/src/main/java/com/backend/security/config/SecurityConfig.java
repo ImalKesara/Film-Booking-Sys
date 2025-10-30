@@ -48,6 +48,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/admin/movie-show/**").hasAuthority(UserRole.ADMIN.name())
                         .requestMatchers("/api/admin/sales-summary").hasAuthority(UserRole.ADMIN.name())
                         .requestMatchers("/api/daily-revenue/**").hasAuthority(UserRole.ADMIN.name())
+                        .requestMatchers("/api/dailyLoss/**").hasAuthority(UserRole.ADMIN.name())
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
