@@ -36,7 +36,7 @@
 							>Discount Applied <span class="text-xs capitalize">(based on loyal points)</span
 							></span
 						>
-						<span class="font-semibold">Rs. {totalAmount?.discountApplied}</span>
+						<span class="text-warning-500 font-semibold">Rs. -{totalAmount?.discountApplied}</span>
 					</div>
 					<hr class="hr" />
 					<div class="flex justify-between">

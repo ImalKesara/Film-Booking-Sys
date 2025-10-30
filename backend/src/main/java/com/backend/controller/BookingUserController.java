@@ -34,10 +34,6 @@ public class BookingUserController {
         return service.getSeatsForShow(id);
     }
 
-    @PostMapping("/seats")
-    public Booking createBySeats(@Valid @RequestBody SeatBookingRequest request) {
-        return bookingService.bookSeats(request);
-    }
 
     @PostMapping("/seats-with-payment")
     public Booking createBySeatsWithPayment(@Valid @RequestBody com.backend.security.dto.SeatBookingWithPaymentRequest request) {

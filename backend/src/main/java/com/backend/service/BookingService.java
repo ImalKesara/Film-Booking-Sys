@@ -2,16 +2,12 @@ package com.backend.service;
 
 import com.backend.model.Booking;
 import com.backend.model.MovieShow;
-import com.backend.model.Payment;
 import com.backend.model.ShowSeat;
 import com.backend.model.User;
 import com.backend.repository.BookingRepository;
 import com.backend.repository.MovieShowRepository;
 import com.backend.repository.ShowSeatRepository;
 import com.backend.repository.UserRepository;
-import com.backend.security.dto.BookingDto;
-import com.backend.security.dto.PaymentDto;
-import com.backend.security.dto.SeatBookingRequest;
 import com.backend.security.dto.SeatBookingWithPaymentRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -33,89 +29,6 @@ public class BookingService {
     private final ShowSeatRepository showSeatRepo;
     private final JdbcTemplate jdbcTemplate; // used to showcase calling stored procedures
 
-
-    // creating booking by users (legacy by count)
-    public Booking createBooking(BookingDto dto){
-        User user = userRepo.findById(dto.getUser())
-                .orElseThrow(() -> new RuntimeException("User not Found"));
-        MovieShow show = showRepo.findById(dto.getMovieShow())
-                .orElseThrow(() -> new RuntimeException("Movie Show not Found"));
-
-        Booking booking = new Booking();
-        booking.setBookingTime(dto.getBookingTime());
-        booking.setBookingStatus(dto.getBookingStatus());
-        booking.setSheetsBooked(dto.getSheetsBooked());
-        booking.setTotalPrice(dto.getTotalPrice());
-        booking.setUser(user);
-        booking.setMovieShow(show);
-
-        return bookingRepo.save(booking);
-
-    }
-
-    // New: booking by explicit seat IDs with pessimistic locking and transaction
-    @Transactional
-    public Booking bookSeats(SeatBookingRequest request) {
-        User user = userRepo.findById(request.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not Found"));
-        MovieShow show = showRepo.findById(request.getShowId())
-                .orElseThrow(() -> new RuntimeException("Movie Show not Found"));
-
-        if (request.getSeatIds() == null || request.getSeatIds().isEmpty()) {
-            throw new RuntimeException("No seats selected");
-        }
-
-        // Normalize and validate unique seat ids
-        Set<Long> uniqueSeatIds = new HashSet<>(request.getSeatIds());
-        List<ShowSeat> seats = showSeatRepo.lockSeatsForUpdateByIds(request.getShowId(), uniqueSeatIds);
-        if (seats.size() != uniqueSeatIds.size()) {
-            throw new RuntimeException("One or more requested seats do not exist for this show");
-        }
-        boolean anyBooked = seats.stream().anyMatch(s -> s.getStatus() == ShowSeat.SeatStatus.BOOKED);
-        if (anyBooked) {
-            throw new RuntimeException("One or more requested seats already booked");
-        }
-
-        // Create booking
-        Booking booking = new Booking();
-        booking.setBookingTime(LocalDateTime.now());
-        booking.setBookingStatus("CONFIRMED");
-        booking.setSheetsBooked(seats.size());
-        booking.setTotalPrice(show.getPrice() * seats.size());
-        booking.setUser(user);
-        booking.setMovieShow(show);
-        Booking savedBooking = bookingRepo.save(booking);
-
-        // Mark seats as booked
-        for (ShowSeat seat : seats) {
-            seat.setStatus(ShowSeat.SeatStatus.BOOKED);
-            seat.setBooking(savedBooking);
-        }
-        showSeatRepo.saveAll(seats);
-
-        // Update available seat count on show
-        show.setAvailableSeats(Math.max(0, show.getAvailableSeats() - seats.size()));
-        showRepo.save(show);
-
-        return savedBooking;
-    }
-
-    // Transactional example: create a booking and its payment atomically
-    @Transactional
-    public Booking createBookingWithPayment(BookingDto bookingDto, PaymentDto paymentDto) {
-        Booking booking = createBooking(bookingDto);
-
-        // Demonstrate calling a stored procedure to create the payment
-        // Procedure: sp_create_payment_for_booking(booking_id, amount, method)
-        jdbcTemplate.update("CALL sp_create_payment_for_booking(?, ?, ?)",
-                booking.getBookingId(), paymentDto.getAmount(), paymentDto.getPaymentMethod());
-
-        // Do not attach a transient Payment entity here.
-        // Attaching a new Payment with CascadeType.ALL would cause Hibernate to try inserting
-        // another Payment row for the same booking_id, leading to a unique key violation.
-        // The stored procedure has already created the Payment row in DB.
-        return booking;
-    }
 
     // New: Book selected seats and create payment in the same transaction
     @Transactional
